@@ -100,6 +100,7 @@ export class KeplrWallet extends Ledger {
                     // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
                     // coinGeckoId: Meteor.settings.public.coingeckoId,
                 }],
+                features: ["ibc-transfer", "ibc-go"],
                 // (Optional) The number of the coin type.
                 // This field is only used to fetch the address from ENS.
                 // Ideally, it is recommended to be the same with BIP44 path's coin type.
