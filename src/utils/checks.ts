@@ -13,7 +13,7 @@ export function isValidAddress(address: string, requiredPrefix?: string): boolea
         if (prefix !== requiredPrefix) {
             return false;
         }
-        return data.length === 20;
+        return data.length === 20 || data.length === 32;
     } catch {
       return false;
     }
