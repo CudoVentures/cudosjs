@@ -6,10 +6,13 @@ import { GroupModule } from "./modules/group/module";
 import { NftInfo, NftModule } from "./modules/nft/module";
 import { checkValidNftDenomId, checkValidAddress } from "../utils/checks";
 import { MsgMultiSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+import { GravityModule } from "./modules/gravity/module";
+import { Coin } from "@cosmjs/proto-signing";
 
 export class CudosSigningStargateClient extends SigningStargateClient {
     public readonly groupModule: GroupModule
     public readonly nftModule: NftModule;
+    public readonly gravityModule: GravityModule;
 
     public static override async connectWithSigner(
         endpoint: string | HttpEndpoint,
@@ -28,6 +31,7 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         super(tmClient, signer, options);
         this.groupModule = new GroupModule(this);
         this.nftModule = new NftModule(this);
+        this.gravityModule = new GravityModule(this);
     }
 
     //easy to use with estimated fee
@@ -185,5 +189,45 @@ export class CudosSigningStargateClient extends SigningStargateClient {
             msg: multisendMsg,
             fee: fee
         }
+    }
+
+    /////// Gravity Module Msg's
+
+    //easy to use with estimated fee
+     public async gravitySendToEth(
+        sender: string,
+        ethDest: string,
+        amount: Coin,
+        bridgeFee: Coin,
+        gasPrice: GasPrice,
+        memo?: string,
+        gasMultiplier?: number,
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.gravityModule.msgSendToEth(sender, ethDest, amount, bridgeFee, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(sender, [msg], fee, memo);
+    }
+
+    //easy to use with estimated fee
+    public async gravitySetMinFeeTransferToEth(
+        sender: string,
+        minFee: string,
+        gasPrice: GasPrice,
+        memo?: string,
+        gasMultiplier?: number,
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.gravityModule.msgSetMinFeeTransferToEth(sender,minFee, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(sender, [msg], fee, memo);
+    }
+
+    //easy to use with estimated fee
+    public async gravityCancelSendToEth(
+        transactionId: Long,
+        sender: string,
+        gasPrice: GasPrice,
+        memo?: string,
+        gasMultiplier?: number,
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.gravityModule.msgCancelSendToEth(transactionId,sender, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(sender, [msg], fee, memo);
     }
 }
