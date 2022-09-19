@@ -7,7 +7,6 @@ import { NftInfo, NftModule } from "./modules/nft/module";
 import { checkValidNftDenomId, checkValidAddress } from "../utils/checks";
 import { MsgMultiSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { GravityModule } from "./modules/gravity/module";
-import { Coin } from "@cosmjs/proto-signing";
 
 export class CudosSigningStargateClient extends SigningStargateClient {
     public readonly groupModule: GroupModule
