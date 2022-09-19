@@ -22,5 +22,3 @@ export async function estimateFee(
         gas: gasLimit.toString(),
     };
 }
-
-

@@ -9,7 +9,7 @@ import { MsgMultiSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { GravityModule } from "./modules/gravity/module";
 
 export class CudosSigningStargateClient extends SigningStargateClient {
-    public readonly groupModule: GroupModule
+    public readonly groupModule: GroupModule;
     public readonly nftModule: NftModule;
     public readonly gravityModule: GravityModule;
 
