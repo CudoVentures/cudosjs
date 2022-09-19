@@ -1,9 +1,11 @@
-import { EncodeObject } from "@cosmjs/proto-signing";
-import { estimateFee, ClientSimulateFn, registerMsgs, ClientRegistry } from "../../../utils";
+import { Coin, EncodeObject } from "@cosmjs/proto-signing";
+import { estimateFee, ClientSimulateFn, registerMsgs, ClientRegistry, DEFAULT_GAS_MULTIPLIER } from "../../../utils";
 import { GasPrice, StdFee } from "../..";
-import { MsgCreateGroupWithPolicy } from "./proto-types/tx.pb";
-import { ThresholdDecisionPolicy, MemberRequest } from "./proto-types/types.pb";
-import { msgCreateGroupWithPolicy, msgSubmitProposal, thresholdDecisionPolicy } from "./types";
+import { Exec, MsgCreateGroupWithPolicy, MsgSubmitProposal, MsgUpdateGroupMetadata, MsgVote, MsgExec, MsgWithdrawProposal, MsgUpdateGroupMembers, MsgUpdateGroupPolicyMetadata, MsgUpdateGroupPolicyDecisionPolicy } from "./proto-types/tx.pb";
+import { ThresholdDecisionPolicy, Member, VoteOption } from "./proto-types/types.pb";
+import { msgCreateGroupWithPolicy, msgSubmitProposal, thresholdDecisionPolicy, msgVote, msgExec, msgUpdateGroupMembers, msgUpdateGroupMetadata, msgUpdateGroupPolicyMetadata, msgUpdateGroupPolicyDecisionPolicy, msgWithdrawProposal } from "./types";
+import { MsgMultiSend, MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+
 
 export class GroupModule {
     private readonly _client: ClientSimulateFn
@@ -12,7 +14,14 @@ export class GroupModule {
         this._client = client;
         registerMsgs(client.registry, [
             msgCreateGroupWithPolicy,
-            msgSubmitProposal
+            msgSubmitProposal,
+            msgVote,
+            msgExec,
+            msgWithdrawProposal,
+            msgUpdateGroupMembers,
+            msgUpdateGroupMetadata,
+            msgUpdateGroupPolicyMetadata,
+            msgUpdateGroupPolicyDecisionPolicy
         ]);
     }
 
@@ -25,25 +34,24 @@ export class GroupModule {
         }[],
         groupMetadata: string,
         groupPolicyMetadata: string,
-        groupPolicyAsAdmin: boolean,
         decisionPolicy: {
             threshold: number,
             votingPeriod: number,
             minExecutionPeriod: number
         },
         gasPrice: GasPrice,
-        gasMultiplier = 1.3,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
         memo = ""
     ): Promise<{ msg: EncodeObject, fee: StdFee }> {
         const threshold = ThresholdDecisionPolicy.fromPartial({
             threshold: decisionPolicy.threshold.toString(),
             windows: {
-                votingPeriod: { seconds: decisionPolicy.votingPeriod },
-                minExecutionPeriod: { seconds: decisionPolicy.minExecutionPeriod },
+                voting_period: { seconds: decisionPolicy.votingPeriod },
+                min_execution_period: { seconds: decisionPolicy.minExecutionPeriod },
             }
         });
 
-        const membersEncoded = members.map(m => MemberRequest.fromPartial({
+        const membersEncoded = members.map(m => Member.fromPartial({
             address: m.address,
             weight: m.weight.toString(),
             metadata: m.metadata,
@@ -54,17 +62,370 @@ export class GroupModule {
             value: MsgCreateGroupWithPolicy.fromPartial({
                 admin: admin,
                 members: membersEncoded,
-                groupMetadata: groupMetadata,
-                groupPolicyMetadata: groupPolicyMetadata,
-                groupPolicyAsAdmin: groupPolicyAsAdmin,
-                decisionPolicy: {
-                    typeUrl: thresholdDecisionPolicy.typeUrl,
+                group_metadata: groupMetadata,
+                group_policy_metadata: groupPolicyMetadata,
+                group_policy_as_admin: true,
+                decision_policy: {
+                    type_url: thresholdDecisionPolicy.typeUrl,
                     value: ThresholdDecisionPolicy.encode(threshold).finish()
                 },
             }),
         };
 
         const fee = await estimateFee(this._client, admin, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee
+        }
+    }
+
+    public async msgSingleSendProposal(
+        recipient: string,
+        amount: Coin[],
+        multisigAddress: string,
+        proposer: string,
+        proposalMetadata: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const singleSendMsg = MsgSend.fromPartial({
+            fromAddress: multisigAddress,
+            toAddress: recipient,
+            amount: amount
+        });
+
+        const msgProposal = {
+            typeUrl: msgSubmitProposal.typeUrl,
+            value: MsgSubmitProposal.fromPartial({
+                address: multisigAddress,
+                proposers: [proposer],
+                metadata: proposalMetadata,
+                messages: [{
+                    type_url: "/cosmos.bank.v1beta1.MsgSend",
+                    value: MsgSend.encode(singleSendMsg).finish()
+                }],
+            })
+        }
+
+        const fee = await estimateFee(this._client, proposer, [msgProposal], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgProposal,
+            fee: fee
+        }
+    }
+
+    public async msgMultiSendProposal(
+        sender: {
+            address: string,
+            coins: Coin[]
+        }[],
+        recipients: {
+            address: string,
+            coins: Coin[]
+        }[],
+        multisigAddress: string,
+        proposer: string,
+        proposalMetadata: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const multisendMsg = MsgMultiSend.fromPartial({
+            inputs: sender,
+            outputs: recipients,
+        });
+
+        const msgProposal = {
+            typeUrl: msgSubmitProposal.typeUrl,
+            value: MsgSubmitProposal.fromPartial({
+                address: multisigAddress,
+                proposers: [proposer],
+                metadata: proposalMetadata,
+                messages: [{
+                    type_url: "/cosmos.bank.v1beta1.MsgMultiSend",
+                    value: MsgMultiSend.encode(multisendMsg).finish()
+                }],
+            })
+        }
+
+        const fee = await estimateFee(this._client, proposer, [msgProposal], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgProposal,
+            fee: fee
+        }
+    }
+
+    public async msgUpdateMembersProposal(
+        memberUpdates: {
+            address: string;
+            weight: number;
+            metadata: string;
+        }[],
+        groupId: number,
+        multisigAddress: string,
+        proposer: string,
+        proposalMetadata: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const membersEncoded = memberUpdates.map(m => Member.fromPartial({
+            address: m.address,
+            weight: m.weight.toString(),
+            metadata: m.metadata,
+        }))
+
+        const msg = MsgUpdateGroupMembers.fromPartial({
+            admin: multisigAddress,
+            group_id: groupId,
+            member_updates: membersEncoded
+        });
+
+        const msgProposal = {
+            typeUrl: msgSubmitProposal.typeUrl,
+            value: MsgSubmitProposal.fromPartial({
+                address: multisigAddress,
+                proposers: [proposer],
+                metadata: proposalMetadata,
+                messages: [{
+                    type_url: msgUpdateGroupMembers.typeUrl,
+                    value: MsgUpdateGroupMembers.encode(msg).finish()
+                }],
+            })
+        }
+
+        const fee = await estimateFee(this._client, proposer, [msgProposal], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgProposal,
+            fee: fee
+        }
+    }
+
+    public async msgUpdateGroupMetadata(
+        metadata: string,
+        groupId: number,
+        multisigAddress: string,
+        proposer: string,
+        proposalMetadata: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const msg = MsgUpdateGroupMetadata.fromPartial({
+            admin: multisigAddress,
+            group_id: groupId,
+            metadata: metadata
+        });
+
+        const msgProposal = {
+            typeUrl: msgSubmitProposal.typeUrl,
+            value: MsgSubmitProposal.fromPartial({
+                address: multisigAddress,
+                proposers: [proposer],
+                metadata: proposalMetadata,
+                messages: [{
+                    type_url: msgUpdateGroupMetadata.typeUrl,
+                    value: MsgUpdateGroupMetadata.encode(msg).finish()
+                }],
+            })
+        }
+
+        const fee = await estimateFee(this._client, proposer, [msgProposal], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgProposal,
+            fee: fee
+        }
+    }
+
+    public async msgUpdateGroupPolicyMetadata(
+        metadata: string,
+        multisigAddress: string,
+        proposer: string,
+        proposalMetadata: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const msg = MsgUpdateGroupPolicyMetadata.fromPartial({
+            admin: multisigAddress,
+            address: multisigAddress,
+            metadata: metadata
+        });
+
+        const msgProposal = {
+            typeUrl: msgSubmitProposal.typeUrl,
+            value: MsgSubmitProposal.fromPartial({
+                address: multisigAddress,
+                proposers: [proposer],
+                metadata: proposalMetadata,
+                messages: [{
+                    type_url: msgUpdateGroupPolicyMetadata.typeUrl,
+                    value: MsgUpdateGroupPolicyMetadata.encode(msg).finish()
+                }],
+            })
+        }
+
+        const fee = await estimateFee(this._client, proposer, [msgProposal], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgProposal,
+            fee: fee
+        }
+    }
+
+    public async msgUpdateGroupDecisionPolicy(
+        decisionPolicy: {
+            threshold: number,
+            votingPeriod: number,
+            minExecutionPeriod: number
+        },
+        multisigAddress: string,
+        proposer: string,
+        proposalMetadata: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const threshold = ThresholdDecisionPolicy.fromPartial({
+            threshold: decisionPolicy.threshold.toString(),
+            windows: {
+                voting_period: { seconds: decisionPolicy.votingPeriod },
+                min_execution_period: { seconds: decisionPolicy.minExecutionPeriod },
+            }
+        });
+
+        const msg = MsgUpdateGroupPolicyDecisionPolicy.fromPartial({
+            admin: multisigAddress,
+            address: multisigAddress,
+            decision_policy: {
+                type_url: thresholdDecisionPolicy.typeUrl,
+                value: ThresholdDecisionPolicy.encode(threshold).finish()
+            }
+        });
+
+        const msgProposal = {
+            typeUrl: msgSubmitProposal.typeUrl,
+            value: MsgSubmitProposal.fromPartial({
+                address: multisigAddress,
+                proposers: [proposer],
+                metadata: proposalMetadata,
+                messages: [{
+                    type_url: msgUpdateGroupPolicyDecisionPolicy.typeUrl,
+                    value: MsgUpdateGroupPolicyDecisionPolicy.encode(msg).finish()
+                }],
+            })
+        }
+
+        const fee = await estimateFee(this._client, proposer, [msgProposal], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgProposal,
+            fee: fee
+        }
+    }
+
+    public async msgSubmitProposal(
+        multisigAddress: string,
+        proposer: string,
+        proposalMetadata: string,
+        messages: { type_url: string; value: Uint8Array; }[],
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const msgEncoded = {
+            typeUrl: msgSubmitProposal.typeUrl,
+            value: MsgSubmitProposal.fromPartial({
+                address: multisigAddress,
+                proposers: [proposer],
+                metadata: proposalMetadata,
+                messages: messages,
+            })
+        }
+
+        const fee = await estimateFee(this._client, proposer, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee
+        }
+    }
+
+    public async msgVote(
+        proposalId: number,
+        voter: string,
+        voteOption: VoteOption,
+        metadata: string,
+        tryExec: Exec,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const msgEncoded = {
+            typeUrl: msgVote.typeUrl,
+            value: MsgVote.fromPartial({
+                proposal_id: proposalId,
+                voter: voter,
+                option: voteOption,
+                metadata: metadata,
+                exec: tryExec
+            })
+        }
+
+        const fee = await estimateFee(this._client, voter, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee
+        }
+    }
+
+    public async msgExec(
+        proposalId: number,
+        signer: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const msgEncoded = {
+            typeUrl: msgExec.typeUrl,
+            value: MsgExec.fromPartial({
+                proposal_id: proposalId,
+                signer: signer
+            })
+        }
+
+        const fee = await estimateFee(this._client, signer, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee
+        }
+    }
+
+    public async msgWithdrawProposal(
+        proposalId: number,
+        multisigAddress: string,
+        signer: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const msgEncoded = {
+            typeUrl: msgVote.typeUrl,
+            value: MsgWithdrawProposal.fromPartial({
+                proposal_id: proposalId,
+                address: multisigAddress
+            })
+        }
+
+        const fee = await estimateFee(this._client, signer, [msgEncoded], gasPrice, gasMultiplier, memo);
 
         return {
             msg: msgEncoded,

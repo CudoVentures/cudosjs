@@ -1,12 +1,12 @@
-import { OfflineSigner } from "@cosmjs/proto-signing";
-import { SigningStargateClientOptions, SigningStargateClient, GasPrice, DeliverTxResponse } from "@cosmjs/stargate";
+import { Coin, EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
+import { SigningStargateClientOptions, SigningStargateClient, GasPrice, DeliverTxResponse, StdFee } from "@cosmjs/stargate";
 import { HttpEndpoint, Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { DEFAULT_GAS_MULTIPLIER, estimateFee } from "../utils";
 import { GroupModule } from "./modules/group/module";
 import { NftInfo, NftModule } from "./modules/nft/module";
-import { MsgIssueDenomResponse } from "./modules/nft/proto-types/tx";
 import { checkValidNftDenomId, checkValidAddress } from "../utils/checks";
+import { MsgMultiSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { GravityModule } from "./modules/gravity/module";
-import { Coin } from "@cosmjs/proto-signing";
 
 export class CudosSigningStargateClient extends SigningStargateClient {
     public readonly groupModule: GroupModule;
@@ -159,6 +159,35 @@ export class CudosSigningStargateClient extends SigningStargateClient {
     ): Promise<DeliverTxResponse> {
         const { msg, fee } = await this.nftModule.msgRevokeNft(addressToRevoke, denomId, tokenId, sender, '', gasPrice, gasMultiplier, memo);
         return this.signAndBroadcast(sender, [msg], fee, memo);
+    }
+
+    public async msgMultisend(
+        sender: {
+            address: string,
+            coins: Coin[]
+        }[],
+        recipients: {
+            address: string,
+            coins: Coin[]
+        }[],
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+        const multisendMsg = {
+            typeUrl: "/cosmos.bank.v1beta1.MsgMultiSend",
+            value: MsgMultiSend.fromPartial({
+                inputs: sender,
+                outputs: recipients,
+            })
+        };
+
+        const fee = await estimateFee(this, sender[0].address, [multisendMsg], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: multisendMsg,
+            fee: fee
+        }
     }
 
     /////// Gravity Module Msg's
