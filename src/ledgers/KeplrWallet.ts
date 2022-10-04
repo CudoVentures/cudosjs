@@ -96,26 +96,26 @@ export class KeplrWallet extends Ledger {
                     coinMinimalDenom: CudosNetworkConsts.CURRENCY_DENOM,
                     // # of decimal points to convert minimal denomination to user-facing denomination.
                     coinDecimals: CudosNetworkConsts.CURRENCY_DECIMALS,
+                    // (Optional) This is used to set the fee of the transaction.
+                    // If this field is not provided, Keplr extension will set the default gas price as (low: 0.01, average: 0.025, high: 0.04).
+                    // Currently, Keplr doesn't support dynamic calculation of the gas prices based on on-chain data.
+                    // Make sure that the gas prices are higher than the minimum gas prices accepted by chain validators and RPC/REST endpoint.
+                    gasPriceStep: {
+                        low: Number(this.keplrWalletConfig.GAS_PRICE),
+                        average: Number(this.keplrWalletConfig.GAS_PRICE) * 2,
+                        high: Number(this.keplrWalletConfig.GAS_PRICE) * 4,
+                    },
                     // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
                     // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
                     // coinGeckoId: Meteor.settings.public.coingeckoId,
                 }],
-                features: ["ibc-transfer", "ibc-go"],
+                features: ["ibc-transfer", "ibc-go", "cosmwasm"],
                 // (Optional) The number of the coin type.
                 // This field is only used to fetch the address from ENS.
                 // Ideally, it is recommended to be the same with BIP44 path's coin type.
                 // However, some early chains may choose to use the Cosmos Hub BIP44 path of '118'.
                 // So, this is separated to support such chains.
-                coinType: CudosNetworkConsts.LEDGER_COIN_TYPE,
-                // (Optional) This is used to set the fee of the transaction.
-                // If this field is not provided, Keplr extension will set the default gas price as (low: 0.01, average: 0.025, high: 0.04).
-                // Currently, Keplr doesn't support dynamic calculation of the gas prices based on on-chain data.
-                // Make sure that the gas prices are higher than the minimum gas prices accepted by chain validators and RPC/REST endpoint.
-                gasPriceStep: {
-                    low: Number(this.keplrWalletConfig.GAS_PRICE),
-                    average: Number(this.keplrWalletConfig.GAS_PRICE) * 2,
-                    high: Number(this.keplrWalletConfig.GAS_PRICE) * 4,
-                },
+                coinType: CudosNetworkConsts.LEDGER_COIN_TYPE
             });
         } catch (ex) {
             console.log(ex);
