@@ -22,6 +22,17 @@ export class CudosNetworkConsts {
 
 }
 
+export class ContractConsts {
+
+    static DEFAULT_CW20_LABEL_UNLIMITED = 'cw20_unlimited';
+    static DEFAULT_CW20_LABEL_BURNABLE = 'cw20_burnable';
+    static DEFAULT_CW20_LABEL_MINTABLE = 'cw20_mintable';
+    static DEFAULT_CW20_LABEL_STANDARD = 'cw20_standard';
+
+    static PRIVATE_TESTNET_CHAIN_ID = 'cudos-testnet-private-3'
+
+}
+
 export const CURRENCY_DISPLAY_NAME = CudosNetworkConsts.CURRENCY_DISPLAY_NAME;
 export const CURRENCY_DENOM = CudosNetworkConsts.CURRENCY_DENOM;
 export const CURRENCY_DECIMALS = CudosNetworkConsts.CURRENCY_DECIMALS;
@@ -37,3 +48,10 @@ export const BECH32_PREFIX_CONS_ADDR = CudosNetworkConsts.BECH32_PREFIX_CONS_ADD
 export const BECH32_PREFIX_CONS_PUB = CudosNetworkConsts.BECH32_PREFIX_CONS_PUB;
 export const BECH32_ACC_ADDR_LENGTH = CudosNetworkConsts.BECH32_ACC_ADDR_LENGTH;
 export const DEFAULT_GAS_MULTIPLIER = CudosNetworkConsts.DEFAULT_GAS_MULTIPLIER;
+
+export const DEFAULT_CW20_LABEL_UNLIMITED = ContractConsts.DEFAULT_CW20_LABEL_UNLIMITED;
+export const DEFAULT_CW20_LABEL_BURNABLE = ContractConsts.DEFAULT_CW20_LABEL_BURNABLE;
+export const DEFAULT_CW20_LABEL_MINTABLE = ContractConsts.DEFAULT_CW20_LABEL_MINTABLE;
+export const DEFAULT_CW20_LABEL_STANDARD = ContractConsts.DEFAULT_CW20_LABEL_STANDARD;
+
+export const PRIVATE_TESTNET_CHAIN_ID = ContractConsts.PRIVATE_TESTNET_CHAIN_ID;
