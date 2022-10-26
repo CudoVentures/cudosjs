@@ -31,7 +31,6 @@ export class CudosSigningCosmWasmClient extends SigningCosmWasmClient {
         options: SigningCosmWasmClientOptions,
       ) {
         super(tmClient, signer, options);
-
         this.Cw20UnlimitedModule = new Cw20UnlimitedModule();
         this.Cw20BurnableModule = new Cw20BurnableModule();
         this.Cw20MintableModule = new Cw20MintableModule();

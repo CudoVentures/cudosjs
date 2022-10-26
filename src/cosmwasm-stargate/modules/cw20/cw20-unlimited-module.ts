@@ -13,6 +13,11 @@ export class Cw20UnlimitedModule extends Cw20BurnableModule {
         msg: ContractMsgInstantiate,
         options: InstantiateOptions
     ): MsgInstantiateContractEncodeObject {
+        // The one who can update marketing info and upload logo is set to sender by default unless passed as null.
+        // If null - no one can ever update marketing info and upload logo as the contract allows
+        if (msg.marketing && typeof msg.marketing.marketing === 'undefined') {
+            msg.marketing.marketing = sender
+        }
         const codeId = getCodeIds(chainId).cw20Unlimited
         return this.wrapperMsgInstantiate(sender, codeId, msg, DEFAULT_CW20_LABEL_UNLIMITED, options)
     }

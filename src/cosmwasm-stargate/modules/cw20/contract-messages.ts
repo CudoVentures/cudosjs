@@ -14,7 +14,7 @@ export type ContractMsgInstantiateNoMint = {
         project?: string | null | undefined,
         // A longer description of the token and it's utility. Designed for tooltips or such
         description?: string | null | undefined,
-        // An address of who can update
+        // An address of who can update. Null or undefined means no one can update marketing info or set logo forever
         marketing?: string | null | undefined,
         logo?: {
             url: string
@@ -30,6 +30,7 @@ export type ContractMsgInstantiateNoMint = {
 
 export type ContractMsgInstantiate = ContractMsgInstantiateNoMint & {
     mint?: {
+        // Only minter is authorised to mint
         minter: string,
         // cap is a hard cap on total supply that can be achieved by minting.
         // If unset, there is unlimited cap.
@@ -123,6 +124,7 @@ export type ContractMsgMint = {
 
 export type ContractMsgUpdateMinter = {
     update_minter: {
+        // Setting the minter to null or undefined will remove the token's minter forever
         new_minter?: string | null | undefined
     }
 }
