@@ -1,15 +1,14 @@
 // Some numeric types such as amount or minter cap must be passed as string so they can be parsed by the smart contract
 // later. 
 
-export type ContractMsgInstantiate = {
+export type ContractMsgInstantiateNoMint = {
     name: string,
     symbol: string,
     decimals: number,
-    initial_balances: { address: string, amount: string }[],
-    mint?: {
-      minter: string,
-      cap?: string | null | undefined
-    }
+    initial_balances: {
+        address: string,
+        amount: string
+    }[],
     marketing?: {
         // A URL pointing to the project behind this token
         project?: string | null | undefined,
@@ -28,22 +27,13 @@ export type ContractMsgInstantiate = {
     }
 }
 
-export type ContractMsgInstantiateNoMint = {
-    name: string,
-    symbol: string,
-    decimals: number,
-    initial_balances: { address: string, amount: string }[],
-    marketing?: {
-        project?: string | null | undefined,
-        description?: string | null | undefined,
-        marketing?: string | null | undefined,
-        logo?: {
-            url: string
-        } | {
-            embedded: { svg: string }
-        } | {
-            embedded: { png: string }
-        }
+
+export type ContractMsgInstantiate = ContractMsgInstantiateNoMint & {
+    mint?: {
+        minter: string,
+        // cap is a hard cap on total supply that can be achieved by minting.
+        // If unset, there is unlimited cap.
+        cap?: string | null | undefined
     }
 }
 

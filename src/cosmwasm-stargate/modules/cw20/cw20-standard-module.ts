@@ -1,6 +1,6 @@
 import {
-    Coin, MsgExecuteContract, MsgExecuteContractEncodeObject, MsgInstantiateContract,
-    MsgInstantiateContractEncodeObject, toAscii, toBase64
+    Coin, MsgExecuteContract, MsgExecuteContractEncodeObject, MsgInstantiateContract,MsgInstantiateContractEncodeObject,
+    toAscii, toBase64
 } from "src";
 import { DEFAULT_CW20_LABEL_STANDARD, getCodeIds } from "src/utils"
 
@@ -9,7 +9,7 @@ import {
     ContractMsgTransfer, ContractMsgTransferFrom, ContractMsgUpdateMarketing, ContractMsgUploadLogo,
     ContractMsgInstantiateNoMint
 } from "./contract-messages";
-import { CustomMsgSend, CustomMsgSendFrom } from "./custom-messages";
+import { CustomMsgSend, CustomMsgSendFrom, InstantiateOptions } from "./custom-messages";
 
 export class Cw20StandardModule {
 
@@ -17,17 +17,18 @@ export class Cw20StandardModule {
         sender: string,
         codeId: number,
         msg: object,
-        funds?: Coin[]
+        label: string,
+        options: InstantiateOptions
     ): MsgInstantiateContractEncodeObject {
         return {
             typeUrl: "/cosmwasm.wasm.v1.MsgInstantiateContract",
             value: MsgInstantiateContract.fromPartial({
                 sender: sender,
-                admin: sender,
+                admin: options.admin,
                 codeId: codeId,
-                label: DEFAULT_CW20_LABEL_STANDARD,
+                label: label,
                 msg: toAscii(JSON.stringify(msg)),
-                funds: funds
+                funds: options.funds
             })
         }
     }
@@ -53,10 +54,10 @@ export class Cw20StandardModule {
         sender: string,
         chainId: string,
         msg: ContractMsgInstantiateNoMint,
-        funds?: Coin[]
+        options: InstantiateOptions
     ): MsgInstantiateContractEncodeObject {
         const codeId = getCodeIds(chainId).cw20Standard
-        return this.wrapperMsgInstantiate(sender, codeId, msg, funds)
+        return this.wrapperMsgInstantiate(sender, codeId, msg, DEFAULT_CW20_LABEL_STANDARD, options)
     }
 
     public msgTransfer(

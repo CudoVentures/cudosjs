@@ -1,3 +1,5 @@
+import { Coin } from "src"
+
 export type CustomMsgSend = {
     send: {
         contract: string,
@@ -13,4 +15,9 @@ export type CustomMsgSendFrom = {
         amount: string,
         msg: object
     }
+}
+
+export type InstantiateOptions = {
+    admin?: string,
+    funds?: Coin[]
 }
