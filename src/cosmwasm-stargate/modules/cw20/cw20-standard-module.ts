@@ -54,7 +54,7 @@ export class Cw20StandardModule {
         sender: string,
         chainId: string,
         msg: ContractMsgInstantiateNoMint,
-        options: InstantiateOptions
+        options: InstantiateOptions = {}
     ): MsgInstantiateContractEncodeObject {
         const codeId = getCodeIds(chainId).cw20Standard
         return this.wrapperMsgInstantiate(sender, codeId, msg, DEFAULT_CW20_LABEL_STANDARD, options)
