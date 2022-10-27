@@ -1,9 +1,9 @@
-import {
-    Coin, MsgExecuteContract, MsgExecuteContractEncodeObject, MsgInstantiateContract,MsgInstantiateContractEncodeObject,
-    toAscii, toBase64
-} from "src";
-import { DEFAULT_CW20_LABEL_STANDARD, getCodeIds } from "src/utils"
+import { Coin } from "@cosmjs/amino";
+import { toAscii, toBase64 } from "@cosmjs/encoding";
+import { MsgExecuteContractEncodeObject, MsgInstantiateContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
+import { MsgExecuteContract, MsgInstantiateContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
+import { DEFAULT_CW20_LABEL_STANDARD, getCodeIds } from "../../../utils";
 import {
     ContractMsgDecreaseAllowance, ContractMsgIncreaseAllowance, ContractMsgSend, ContractMsgSendFrom,
     ContractMsgTransfer, ContractMsgTransferFrom, ContractMsgUpdateMarketing, ContractMsgUploadLogo,

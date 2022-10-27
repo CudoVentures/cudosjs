@@ -1,4 +1,4 @@
-import { PRIVATE_TESTNET_CHAIN_ID } from "src/utils/constants"
+import { PRIVATE_TESTNET_CHAIN_ID } from "./constants";
 
 type ContractToCodeId = {
     readonly cw20Unlimited: number

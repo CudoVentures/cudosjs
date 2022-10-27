@@ -1,4 +1,4 @@
-import { Coin } from "src"
+import { Coin } from "@cosmjs/amino"
 
 export type CustomMsgSend = {
     send: {

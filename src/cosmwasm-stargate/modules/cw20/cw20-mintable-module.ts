@@ -1,6 +1,7 @@
-import { Coin, MsgExecuteContractEncodeObject, MsgInstantiateContractEncodeObject } from "src";
-import { DEFAULT_CW20_LABEL_MINTABLE, getCodeIds } from "src/utils"
+import { Coin } from "@cosmjs/amino";
+import { MsgExecuteContractEncodeObject, MsgInstantiateContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 
+import { DEFAULT_CW20_LABEL_MINTABLE, getCodeIds } from "../../../utils";
 import { ContractMsgInstantiate, ContractMsgMint, ContractMsgUpdateMinter } from "./contract-messages";
 import { InstantiateOptions } from "./custom-messages";
 import { Cw20StandardModule } from "./cw20-standard-module";
