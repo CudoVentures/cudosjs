@@ -20,8 +20,6 @@ export class CudosNetworkConsts {
 
     static MESSAGE_TYPE_URL = '/gravity.v1.MsgSendToEth';
 
-    static PRIVATE_TESTNET_CHAIN_ID = 'cudos-testnet-private-3'
-
 }
 
 export const CURRENCY_DISPLAY_NAME = CudosNetworkConsts.CURRENCY_DISPLAY_NAME;
@@ -39,5 +37,3 @@ export const BECH32_PREFIX_CONS_ADDR = CudosNetworkConsts.BECH32_PREFIX_CONS_ADD
 export const BECH32_PREFIX_CONS_PUB = CudosNetworkConsts.BECH32_PREFIX_CONS_PUB;
 export const BECH32_ACC_ADDR_LENGTH = CudosNetworkConsts.BECH32_ACC_ADDR_LENGTH;
 export const DEFAULT_GAS_MULTIPLIER = CudosNetworkConsts.DEFAULT_GAS_MULTIPLIER;
-
-export const PRIVATE_TESTNET_CHAIN_ID = CudosNetworkConsts.PRIVATE_TESTNET_CHAIN_ID;

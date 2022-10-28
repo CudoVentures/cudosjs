@@ -1,13 +1,10 @@
 import { SigningCosmWasmClient, SigningCosmWasmClientOptions } from "@cosmjs/cosmwasm-stargate";
 import { OfflineSigner } from "@cosmjs/proto-signing";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { Cw20BurnableModule, Cw20MintableModule, Cw20StandardModule, Cw20UnlimitedModule } from "./modules/cw20";
+import { Cw20Module } from "./modules/cw20";
 
 export class CudosSigningCosmWasmClient extends SigningCosmWasmClient {
-    public readonly Cw20UnlimitedModule: Cw20UnlimitedModule;
-    public readonly Cw20BurnableModule: Cw20BurnableModule;
-    public readonly Cw20MintableModule: Cw20MintableModule;
-    public readonly Cw20StandardModule: Cw20StandardModule;
+    public readonly Cw20Module: Cw20Module;
 
     public static override async connectWithSigner(
         endpoint: string,
@@ -31,10 +28,7 @@ export class CudosSigningCosmWasmClient extends SigningCosmWasmClient {
         options: SigningCosmWasmClientOptions,
       ) {
         super(tmClient, signer, options);
-        this.Cw20UnlimitedModule = new Cw20UnlimitedModule();
-        this.Cw20BurnableModule = new Cw20BurnableModule();
-        this.Cw20MintableModule = new Cw20MintableModule();
-        this.Cw20StandardModule = new Cw20StandardModule();
+        this.Cw20Module = new Cw20Module();
       }
 
 }
