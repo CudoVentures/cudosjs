@@ -3,11 +3,12 @@ import { toAscii, toBase64 } from "@cosmjs/encoding";
 import { MsgExecuteContractEncodeObject, MsgInstantiateContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 import { MsgExecuteContract, MsgInstantiateContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
-import { DEFAULT_CW20_LABEL_STANDARD, getCodeIds } from "../../../utils";
+import { getCodeIds } from "../../../utils";
 import {
     ContractMsgDecreaseAllowance, ContractMsgIncreaseAllowance, ContractMsgSend, ContractMsgSendFrom,
     ContractMsgTransfer, ContractMsgTransferFrom, ContractMsgUpdateMarketing, ContractMsgUploadLogo,
-    ContractMsgInstantiateNoMint
+    ContractMsgInstantiateNoMint,
+    ContractMsgInstantiate
 } from "./contract-messages";
 import { CustomMsgSend, CustomMsgSendFrom, InstantiateOptions } from "./custom-messages";
 
@@ -16,8 +17,7 @@ export class Cw20StandardModule {
     protected wrapperMsgInstantiate(
         sender: string,
         codeId: number,
-        msg: object,
-        label: string,
+        msg: ContractMsgInstantiate | ContractMsgInstantiateNoMint,
         options: InstantiateOptions
     ): MsgInstantiateContractEncodeObject {
         return {
@@ -26,7 +26,7 @@ export class Cw20StandardModule {
                 sender: sender,
                 admin: options.admin,
                 codeId: codeId,
-                label: label,
+                label: msg.name,
                 msg: toAscii(JSON.stringify(msg)),
                 funds: options.funds
             })
@@ -57,7 +57,7 @@ export class Cw20StandardModule {
         options: InstantiateOptions = {}
     ): MsgInstantiateContractEncodeObject {
         const codeId = getCodeIds(chainId).cw20Standard
-        return this.wrapperMsgInstantiate(sender, codeId, msg, DEFAULT_CW20_LABEL_STANDARD, options)
+        return this.wrapperMsgInstantiate(sender, codeId, msg, options)
     }
 
     public msgTransfer(

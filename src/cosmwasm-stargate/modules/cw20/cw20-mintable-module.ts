@@ -1,7 +1,7 @@
 import { Coin } from "@cosmjs/amino";
 import { MsgExecuteContractEncodeObject, MsgInstantiateContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 
-import { DEFAULT_CW20_LABEL_MINTABLE, getCodeIds } from "../../../utils";
+import { getCodeIds } from "../../../utils";
 import { ContractMsgInstantiate, ContractMsgMint, ContractMsgUpdateMinter } from "./contract-messages";
 import { InstantiateOptions } from "./custom-messages";
 import { Cw20StandardModule } from "./cw20-standard-module";
@@ -20,7 +20,7 @@ export class Cw20MintableModule extends Cw20StandardModule {
             msg.marketing.marketing = sender
         }
         const codeId = getCodeIds(chainId).cw20Mintable
-        return this.wrapperMsgInstantiate(sender, codeId, msg, DEFAULT_CW20_LABEL_MINTABLE, options)
+        return this.wrapperMsgInstantiate(sender, codeId, msg, options)
     }
 
     public msgMint(
