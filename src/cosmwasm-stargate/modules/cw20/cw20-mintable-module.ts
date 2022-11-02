@@ -1,7 +1,6 @@
 import { Coin } from "@cosmjs/amino";
 import { MsgExecuteContractEncodeObject, MsgInstantiateContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 
-import { getCodeIds } from "../../../utils";
 import { ContractMsgInstantiate, ContractMsgMint, ContractMsgUpdateMinter } from "./contract-messages";
 import { InstantiateOptions } from "./custom-messages";
 import { Cw20StandardModule } from "./cw20-standard-module";
@@ -10,7 +9,7 @@ export class Cw20MintableModule extends Cw20StandardModule {
 
     public override msgInstantiate(
         sender: string,
-        chainId: string,
+        codeId: number,
         msg: ContractMsgInstantiate,
         options: InstantiateOptions = {}
     ): MsgInstantiateContractEncodeObject {
@@ -19,7 +18,6 @@ export class Cw20MintableModule extends Cw20StandardModule {
         if (msg.marketing && typeof msg.marketing.marketing === 'undefined') {
             msg.marketing.marketing = sender
         }
-        const codeId = getCodeIds(chainId).cw20Mintable
         return this.wrapperMsgInstantiate(sender, codeId, msg, options)
     }
 

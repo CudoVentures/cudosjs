@@ -3,12 +3,10 @@ import { toAscii, toBase64 } from "@cosmjs/encoding";
 import { MsgExecuteContractEncodeObject, MsgInstantiateContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 import { MsgExecuteContract, MsgInstantiateContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
-import { getCodeIds } from "../../../utils";
 import {
     ContractMsgDecreaseAllowance, ContractMsgIncreaseAllowance, ContractMsgSend, ContractMsgSendFrom,
     ContractMsgTransfer, ContractMsgTransferFrom, ContractMsgUpdateMarketing, ContractMsgUploadLogo,
-    ContractMsgInstantiateNoMint,
-    ContractMsgInstantiate
+    ContractMsgInstantiateNoMint
 } from "./contract-messages";
 import { CustomMsgSend, CustomMsgSendFrom, InstantiateOptions } from "./custom-messages";
 
@@ -17,7 +15,7 @@ export class Cw20StandardModule {
     protected wrapperMsgInstantiate(
         sender: string,
         codeId: number,
-        msg: ContractMsgInstantiate | ContractMsgInstantiateNoMint,
+        msg: ContractMsgInstantiateNoMint,
         options: InstantiateOptions
     ): MsgInstantiateContractEncodeObject {
         return {
@@ -52,11 +50,15 @@ export class Cw20StandardModule {
 
     public msgInstantiate(
         sender: string,
-        chainId: string,
+        codeId: number,
         msg: ContractMsgInstantiateNoMint,
         options: InstantiateOptions = {}
     ): MsgInstantiateContractEncodeObject {
-        const codeId = getCodeIds(chainId).cw20Standard
+        // The one who can update marketing info and upload logo is set to sender by default unless passed as null.
+        // If null - no one can ever update marketing info and upload logo as the contract allows
+        if (msg.marketing && typeof msg.marketing.marketing === 'undefined') {
+            msg.marketing.marketing = sender
+        }
         return this.wrapperMsgInstantiate(sender, codeId, msg, options)
     }
 
