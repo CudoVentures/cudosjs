@@ -119,4 +119,8 @@ export { nftMsgProto,
           gravityMsgProto,
           gravityQueryProto,
           groupMsgProto,
-          groupQueryProto } from "./modules"
+          groupQueryProto,
+          marketplaceMsgProto,
+          marketplaceQueryProto,
+          addressbookMsgProto,
+          addressbookQueryProto } from "./modules"
