@@ -1,3 +1,7 @@
+export {
+  MsgExecuteContract,
+  MsgInstantiateContract
+} from "cosmjs-types/cosmwasm/wasm/v1/tx";
 export { cosmWasmTypes } from "@cosmjs/cosmwasm-stargate";
 export {
   Code,
@@ -32,3 +36,4 @@ export {
 
 export { CudosCosmWasmClient as CosmWasmClient } from './cudos-cosmwasmclient';
 export { CudosSigningCosmWasmClient as SigningCosmWasmClient } from './cudos-signingcosmwasmclient';
+export { cw20Messages } from "./modules"
