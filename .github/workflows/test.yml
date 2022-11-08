@@ -11,7 +11,9 @@ jobs:
         name: Setup node.js
         with:
           node-version: 16
+      - run: rm -r .npmrc
+        name: Remove .npmrc for the test run
       - run: yarn
         name: Install dependencies
-      - run: npm run test:core
-        name: yarn test
+      - run: yarn test
+        name: Run tests
