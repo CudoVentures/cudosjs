@@ -1,7 +1,7 @@
 import { DirectSecp256k1HdWallet, SigningStargateClient, verifyNonceMsgSigner } from '../src/index';
 
 
-describe("NonceMsg", () => {
+describe("Nonce", () => {
     test("sign and verify nonce msg", async () => {
         const mnemonic = 'ordinary witness such toddler tag mouse helmet perfect venue eyebrow upgrade rabbit';
         const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
