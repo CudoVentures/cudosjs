@@ -1,6 +1,6 @@
 /* eslint-disable */
 import Long from "long";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "cudosnode.cudosnode.nft";
 
@@ -21,6 +21,10 @@ export interface Denom {
   schema: string;
   creator: string;
   symbol: string;
+  traits: string;
+  minter: string;
+  description: string;
+  data: string;
 }
 
 /** IDCollection defines a type of collection with specified ID */
@@ -160,7 +164,17 @@ export const BaseNFT = {
 };
 
 function createBaseDenom(): Denom {
-  return { id: "", name: "", schema: "", creator: "", symbol: "" };
+  return {
+    id: "",
+    name: "",
+    schema: "",
+    creator: "",
+    symbol: "",
+    traits: "",
+    minter: "",
+    description: "",
+    data: "",
+  };
 }
 
 export const Denom = {
@@ -179,6 +193,18 @@ export const Denom = {
     }
     if (message.symbol !== "") {
       writer.uint32(42).string(message.symbol);
+    }
+    if (message.traits !== "") {
+      writer.uint32(50).string(message.traits);
+    }
+    if (message.minter !== "") {
+      writer.uint32(58).string(message.minter);
+    }
+    if (message.description !== "") {
+      writer.uint32(66).string(message.description);
+    }
+    if (message.data !== "") {
+      writer.uint32(74).string(message.data);
     }
     return writer;
   },
@@ -205,6 +231,18 @@ export const Denom = {
         case 5:
           message.symbol = reader.string();
           break;
+        case 6:
+          message.traits = reader.string();
+          break;
+        case 7:
+          message.minter = reader.string();
+          break;
+        case 8:
+          message.description = reader.string();
+          break;
+        case 9:
+          message.data = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -220,6 +258,10 @@ export const Denom = {
       schema: isSet(object.schema) ? String(object.schema) : "",
       creator: isSet(object.creator) ? String(object.creator) : "",
       symbol: isSet(object.symbol) ? String(object.symbol) : "",
+      traits: isSet(object.traits) ? String(object.traits) : "",
+      minter: isSet(object.minter) ? String(object.minter) : "",
+      description: isSet(object.description) ? String(object.description) : "",
+      data: isSet(object.data) ? String(object.data) : "",
     };
   },
 
@@ -230,6 +272,10 @@ export const Denom = {
     message.schema !== undefined && (obj.schema = message.schema);
     message.creator !== undefined && (obj.creator = message.creator);
     message.symbol !== undefined && (obj.symbol = message.symbol);
+    message.traits !== undefined && (obj.traits = message.traits);
+    message.minter !== undefined && (obj.minter = message.minter);
+    message.description !== undefined && (obj.description = message.description);
+    message.data !== undefined && (obj.data = message.data);
     return obj;
   },
 
@@ -240,6 +286,10 @@ export const Denom = {
     message.schema = object.schema ?? "";
     message.creator = object.creator ?? "";
     message.symbol = object.symbol ?? "";
+    message.traits = object.traits ?? "";
+    message.minter = object.minter ?? "";
+    message.description = object.description ?? "";
+    message.data = object.data ?? "";
     return message;
   },
 };
@@ -730,7 +780,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

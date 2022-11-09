@@ -1,8 +1,8 @@
 /* eslint-disable */
-import { PageRequest, PageResponse } from "cosmjs-types/cosmos/base/query/v1beta1/pagination";
-import { Owner, Collection, Denom, BaseNFT } from "./nft";
 import Long from "long";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal";
+import { PageRequest, PageResponse } from "cosmjs-types/cosmos/base/query/v1beta1/pagination";
+import { BaseNFT, Collection, Denom, Owner } from "./nft";
 
 export const protobufPackage = "cudosnode.cudosnode.nft";
 
@@ -43,6 +43,16 @@ export interface QueryCollectionRequest {
 export interface QueryCollectionResponse {
   collection?: Collection;
   pagination?: PageResponse;
+}
+
+/** QueryCollectionsByIdsRequest is the request type for the Query/CollectionsByIds RPC method */
+export interface QueryCollectionsByIdsRequest {
+  denomIds: string[];
+}
+
+/** QueryCollectionResponse is the response type for the Query/CollectionsByIds RPC method */
+export interface QueryCollectionByIdsResponse {
+  collections: Collection[];
 }
 
 /** QueryDenomRequest is the request type for the Query/Denom RPC method */
@@ -209,9 +219,7 @@ export const QuerySupplyResponse = {
   },
 
   fromJSON(object: any): QuerySupplyResponse {
-    return {
-      amount: isSet(object.amount) ? Long.fromValue(object.amount) : Long.UZERO,
-    };
+    return { amount: isSet(object.amount) ? Long.fromValue(object.amount) : Long.UZERO };
   },
 
   toJSON(message: QuerySupplyResponse): unknown {
@@ -490,6 +498,116 @@ export const QueryCollectionResponse = {
   },
 };
 
+function createBaseQueryCollectionsByIdsRequest(): QueryCollectionsByIdsRequest {
+  return { denomIds: [] };
+}
+
+export const QueryCollectionsByIdsRequest = {
+  encode(message: QueryCollectionsByIdsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.denomIds) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryCollectionsByIdsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryCollectionsByIdsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denomIds.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryCollectionsByIdsRequest {
+    return { denomIds: Array.isArray(object?.denomIds) ? object.denomIds.map((e: any) => String(e)) : [] };
+  },
+
+  toJSON(message: QueryCollectionsByIdsRequest): unknown {
+    const obj: any = {};
+    if (message.denomIds) {
+      obj.denomIds = message.denomIds.map((e) => e);
+    } else {
+      obj.denomIds = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryCollectionsByIdsRequest>, I>>(
+    object: I,
+  ): QueryCollectionsByIdsRequest {
+    const message = createBaseQueryCollectionsByIdsRequest();
+    message.denomIds = object.denomIds?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseQueryCollectionByIdsResponse(): QueryCollectionByIdsResponse {
+  return { collections: [] };
+}
+
+export const QueryCollectionByIdsResponse = {
+  encode(message: QueryCollectionByIdsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.collections) {
+      Collection.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryCollectionByIdsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryCollectionByIdsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.collections.push(Collection.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryCollectionByIdsResponse {
+    return {
+      collections: Array.isArray(object?.collections)
+        ? object.collections.map((e: any) => Collection.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: QueryCollectionByIdsResponse): unknown {
+    const obj: any = {};
+    if (message.collections) {
+      obj.collections = message.collections.map((e) => (e ? Collection.toJSON(e) : undefined));
+    } else {
+      obj.collections = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryCollectionByIdsResponse>, I>>(
+    object: I,
+  ): QueryCollectionByIdsResponse {
+    const message = createBaseQueryCollectionByIdsResponse();
+    message.collections = object.collections?.map((e) => Collection.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseQueryDenomRequest(): QueryDenomRequest {
   return { denomId: "" };
 }
@@ -521,9 +639,7 @@ export const QueryDenomRequest = {
   },
 
   fromJSON(object: any): QueryDenomRequest {
-    return {
-      denomId: isSet(object.denomId) ? String(object.denomId) : "",
-    };
+    return { denomId: isSet(object.denomId) ? String(object.denomId) : "" };
   },
 
   toJSON(message: QueryDenomRequest): unknown {
@@ -570,9 +686,7 @@ export const QueryDenomResponse = {
   },
 
   fromJSON(object: any): QueryDenomResponse {
-    return {
-      denom: isSet(object.denom) ? Denom.fromJSON(object.denom) : undefined,
-    };
+    return { denom: isSet(object.denom) ? Denom.fromJSON(object.denom) : undefined };
   },
 
   toJSON(message: QueryDenomResponse): unknown {
@@ -620,9 +734,7 @@ export const QueryDenomByNameRequest = {
   },
 
   fromJSON(object: any): QueryDenomByNameRequest {
-    return {
-      denomName: isSet(object.denomName) ? String(object.denomName) : "",
-    };
+    return { denomName: isSet(object.denomName) ? String(object.denomName) : "" };
   },
 
   toJSON(message: QueryDenomByNameRequest): unknown {
@@ -669,9 +781,7 @@ export const QueryDenomBySymbolRequest = {
   },
 
   fromJSON(object: any): QueryDenomBySymbolRequest {
-    return {
-      symbol: isSet(object.symbol) ? String(object.symbol) : "",
-    };
+    return { symbol: isSet(object.symbol) ? String(object.symbol) : "" };
   },
 
   toJSON(message: QueryDenomBySymbolRequest): unknown {
@@ -720,9 +830,7 @@ export const QueryDenomByNameResponse = {
   },
 
   fromJSON(object: any): QueryDenomByNameResponse {
-    return {
-      denom: isSet(object.denom) ? Denom.fromJSON(object.denom) : undefined,
-    };
+    return { denom: isSet(object.denom) ? Denom.fromJSON(object.denom) : undefined };
   },
 
   toJSON(message: QueryDenomByNameResponse): unknown {
@@ -772,9 +880,7 @@ export const QueryDenomBySymbolResponse = {
   },
 
   fromJSON(object: any): QueryDenomBySymbolResponse {
-    return {
-      denom: isSet(object.denom) ? Denom.fromJSON(object.denom) : undefined,
-    };
+    return { denom: isSet(object.denom) ? Denom.fromJSON(object.denom) : undefined };
   },
 
   toJSON(message: QueryDenomBySymbolResponse): unknown {
@@ -824,9 +930,7 @@ export const QueryDenomsRequest = {
   },
 
   fromJSON(object: any): QueryDenomsRequest {
-    return {
-      pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
-    };
+    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
   },
 
   toJSON(message: QueryDenomsRequest): unknown {
@@ -1001,9 +1105,7 @@ export const QueryNFTResponse = {
   },
 
   fromJSON(object: any): QueryNFTResponse {
-    return {
-      nft: isSet(object.nft) ? BaseNFT.fromJSON(object.nft) : undefined,
-    };
+    return { nft: isSet(object.nft) ? BaseNFT.fromJSON(object.nft) : undefined };
   },
 
   toJSON(message: QueryNFTResponse): unknown {
@@ -1234,9 +1336,7 @@ export const QueryApprovalsIsApprovedForAllResponse = {
   },
 
   fromJSON(object: any): QueryApprovalsIsApprovedForAllResponse {
-    return {
-      isApproved: isSet(object.isApproved) ? Boolean(object.isApproved) : false,
-    };
+    return { isApproved: isSet(object.isApproved) ? Boolean(object.isApproved) : false };
   },
 
   toJSON(message: QueryApprovalsIsApprovedForAllResponse): unknown {
@@ -1262,6 +1362,8 @@ export interface Query {
   Owner(request: QueryOwnerRequest): Promise<QueryOwnerResponse>;
   /** Collection queries the NFTs of the specified denom */
   Collection(request: QueryCollectionRequest): Promise<QueryCollectionResponse>;
+  /** Collection queries the NFTs of the specified denom */
+  CollectionsByDenomIds(request: QueryCollectionsByIdsRequest): Promise<QueryCollectionByIdsResponse>;
   /** Denom queries the definition of a given denom */
   Denom(request: QueryDenomRequest): Promise<QueryDenomResponse>;
   /** DenomByName queries the definition of a given denom by name */
@@ -1282,11 +1384,14 @@ export interface Query {
 
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || "cudosnode.cudosnode.nft.Query";
     this.rpc = rpc;
     this.Supply = this.Supply.bind(this);
     this.Owner = this.Owner.bind(this);
     this.Collection = this.Collection.bind(this);
+    this.CollectionsByDenomIds = this.CollectionsByDenomIds.bind(this);
     this.Denom = this.Denom.bind(this);
     this.DenomByName = this.DenomByName.bind(this);
     this.DenomBySymbol = this.DenomBySymbol.bind(this);
@@ -1297,55 +1402,61 @@ export class QueryClientImpl implements Query {
   }
   Supply(request: QuerySupplyRequest): Promise<QuerySupplyResponse> {
     const data = QuerySupplyRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "Supply", data);
+    const promise = this.rpc.request(this.service, "Supply", data);
     return promise.then((data) => QuerySupplyResponse.decode(new _m0.Reader(data)));
   }
 
   Owner(request: QueryOwnerRequest): Promise<QueryOwnerResponse> {
     const data = QueryOwnerRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "Owner", data);
+    const promise = this.rpc.request(this.service, "Owner", data);
     return promise.then((data) => QueryOwnerResponse.decode(new _m0.Reader(data)));
   }
 
   Collection(request: QueryCollectionRequest): Promise<QueryCollectionResponse> {
     const data = QueryCollectionRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "Collection", data);
+    const promise = this.rpc.request(this.service, "Collection", data);
     return promise.then((data) => QueryCollectionResponse.decode(new _m0.Reader(data)));
+  }
+
+  CollectionsByDenomIds(request: QueryCollectionsByIdsRequest): Promise<QueryCollectionByIdsResponse> {
+    const data = QueryCollectionsByIdsRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "CollectionsByDenomIds", data);
+    return promise.then((data) => QueryCollectionByIdsResponse.decode(new _m0.Reader(data)));
   }
 
   Denom(request: QueryDenomRequest): Promise<QueryDenomResponse> {
     const data = QueryDenomRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "Denom", data);
+    const promise = this.rpc.request(this.service, "Denom", data);
     return promise.then((data) => QueryDenomResponse.decode(new _m0.Reader(data)));
   }
 
   DenomByName(request: QueryDenomByNameRequest): Promise<QueryDenomByNameResponse> {
     const data = QueryDenomByNameRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "DenomByName", data);
+    const promise = this.rpc.request(this.service, "DenomByName", data);
     return promise.then((data) => QueryDenomByNameResponse.decode(new _m0.Reader(data)));
   }
 
   DenomBySymbol(request: QueryDenomBySymbolRequest): Promise<QueryDenomBySymbolResponse> {
     const data = QueryDenomBySymbolRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "DenomBySymbol", data);
+    const promise = this.rpc.request(this.service, "DenomBySymbol", data);
     return promise.then((data) => QueryDenomBySymbolResponse.decode(new _m0.Reader(data)));
   }
 
   Denoms(request: QueryDenomsRequest): Promise<QueryDenomsResponse> {
     const data = QueryDenomsRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "Denoms", data);
+    const promise = this.rpc.request(this.service, "Denoms", data);
     return promise.then((data) => QueryDenomsResponse.decode(new _m0.Reader(data)));
   }
 
   NFT(request: QueryNFTRequest): Promise<QueryNFTResponse> {
     const data = QueryNFTRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "NFT", data);
+    const promise = this.rpc.request(this.service, "NFT", data);
     return promise.then((data) => QueryNFTResponse.decode(new _m0.Reader(data)));
   }
 
   GetApprovalsNFT(request: QueryApprovalsNFTRequest): Promise<QueryApprovalsNFTResponse> {
     const data = QueryApprovalsNFTRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "GetApprovalsNFT", data);
+    const promise = this.rpc.request(this.service, "GetApprovalsNFT", data);
     return promise.then((data) => QueryApprovalsNFTResponse.decode(new _m0.Reader(data)));
   }
 
@@ -1353,7 +1464,7 @@ export class QueryClientImpl implements Query {
     request: QueryApprovalsIsApprovedForAllRequest,
   ): Promise<QueryApprovalsIsApprovedForAllResponse> {
     const data = QueryApprovalsIsApprovedForAllRequest.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Query", "QueryApprovalsIsApprovedForAll", data);
+    const promise = this.rpc.request(this.service, "QueryApprovalsIsApprovedForAll", data);
     return promise.then((data) => QueryApprovalsIsApprovedForAllResponse.decode(new _m0.Reader(data)));
   }
 }
@@ -1379,7 +1490,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

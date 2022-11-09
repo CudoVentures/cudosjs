@@ -1,6 +1,6 @@
 /* eslint-disable */
 import Long from "long";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "cudosnode.cudosnode.nft";
 
@@ -12,6 +12,10 @@ export interface MsgIssueDenom {
   sender: string;
   contractAddressSigner: string;
   symbol: string;
+  traits: string;
+  minter: string;
+  description: string;
+  data: string;
 }
 
 /** MsgIssueDenomResponse defines the Msg/IssueDenom response type. */
@@ -103,8 +107,30 @@ export interface MsgBurnNFT {
 /** MsgBurnNFTResponse defines the Msg/BurnNFT response type. */
 export interface MsgBurnNFTResponse {}
 
+/** MsgTransferDenom defines an SDK message for transferring an denom to recipient. */
+export interface MsgTransferDenom {
+  id: string;
+  sender: string;
+  recipient: string;
+  contractAddressSigner: string;
+}
+
+/** MsgTransferDenomResponse defines the Msg/TransferDenom response type. */
+export interface MsgTransferDenomResponse {}
+
 function createBaseMsgIssueDenom(): MsgIssueDenom {
-  return { id: "", name: "", schema: "", sender: "", contractAddressSigner: "", symbol: "" };
+  return {
+    id: "",
+    name: "",
+    schema: "",
+    sender: "",
+    contractAddressSigner: "",
+    symbol: "",
+    traits: "",
+    minter: "",
+    description: "",
+    data: "",
+  };
 }
 
 export const MsgIssueDenom = {
@@ -126,6 +152,18 @@ export const MsgIssueDenom = {
     }
     if (message.symbol !== "") {
       writer.uint32(50).string(message.symbol);
+    }
+    if (message.traits !== "") {
+      writer.uint32(58).string(message.traits);
+    }
+    if (message.minter !== "") {
+      writer.uint32(66).string(message.minter);
+    }
+    if (message.description !== "") {
+      writer.uint32(74).string(message.description);
+    }
+    if (message.data !== "") {
+      writer.uint32(82).string(message.data);
     }
     return writer;
   },
@@ -155,6 +193,18 @@ export const MsgIssueDenom = {
         case 6:
           message.symbol = reader.string();
           break;
+        case 7:
+          message.traits = reader.string();
+          break;
+        case 8:
+          message.minter = reader.string();
+          break;
+        case 9:
+          message.description = reader.string();
+          break;
+        case 10:
+          message.data = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -171,6 +221,10 @@ export const MsgIssueDenom = {
       sender: isSet(object.sender) ? String(object.sender) : "",
       contractAddressSigner: isSet(object.contractAddressSigner) ? String(object.contractAddressSigner) : "",
       symbol: isSet(object.symbol) ? String(object.symbol) : "",
+      traits: isSet(object.traits) ? String(object.traits) : "",
+      minter: isSet(object.minter) ? String(object.minter) : "",
+      description: isSet(object.description) ? String(object.description) : "",
+      data: isSet(object.data) ? String(object.data) : "",
     };
   },
 
@@ -183,6 +237,10 @@ export const MsgIssueDenom = {
     message.contractAddressSigner !== undefined &&
       (obj.contractAddressSigner = message.contractAddressSigner);
     message.symbol !== undefined && (obj.symbol = message.symbol);
+    message.traits !== undefined && (obj.traits = message.traits);
+    message.minter !== undefined && (obj.minter = message.minter);
+    message.description !== undefined && (obj.description = message.description);
+    message.data !== undefined && (obj.data = message.data);
     return obj;
   },
 
@@ -194,6 +252,10 @@ export const MsgIssueDenom = {
     message.sender = object.sender ?? "";
     message.contractAddressSigner = object.contractAddressSigner ?? "";
     message.symbol = object.symbol ?? "";
+    message.traits = object.traits ?? "";
+    message.minter = object.minter ?? "";
+    message.description = object.description ?? "";
+    message.data = object.data ?? "";
     return message;
   },
 };
@@ -1139,6 +1201,122 @@ export const MsgBurnNFTResponse = {
   },
 };
 
+function createBaseMsgTransferDenom(): MsgTransferDenom {
+  return { id: "", sender: "", recipient: "", contractAddressSigner: "" };
+}
+
+export const MsgTransferDenom = {
+  encode(message: MsgTransferDenom, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.sender !== "") {
+      writer.uint32(18).string(message.sender);
+    }
+    if (message.recipient !== "") {
+      writer.uint32(26).string(message.recipient);
+    }
+    if (message.contractAddressSigner !== "") {
+      writer.uint32(34).string(message.contractAddressSigner);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgTransferDenom {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgTransferDenom();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.string();
+          break;
+        case 2:
+          message.sender = reader.string();
+          break;
+        case 3:
+          message.recipient = reader.string();
+          break;
+        case 4:
+          message.contractAddressSigner = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgTransferDenom {
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
+      recipient: isSet(object.recipient) ? String(object.recipient) : "",
+      contractAddressSigner: isSet(object.contractAddressSigner) ? String(object.contractAddressSigner) : "",
+    };
+  },
+
+  toJSON(message: MsgTransferDenom): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    message.sender !== undefined && (obj.sender = message.sender);
+    message.recipient !== undefined && (obj.recipient = message.recipient);
+    message.contractAddressSigner !== undefined &&
+      (obj.contractAddressSigner = message.contractAddressSigner);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgTransferDenom>, I>>(object: I): MsgTransferDenom {
+    const message = createBaseMsgTransferDenom();
+    message.id = object.id ?? "";
+    message.sender = object.sender ?? "";
+    message.recipient = object.recipient ?? "";
+    message.contractAddressSigner = object.contractAddressSigner ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgTransferDenomResponse(): MsgTransferDenomResponse {
+  return {};
+}
+
+export const MsgTransferDenomResponse = {
+  encode(_: MsgTransferDenomResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgTransferDenomResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgTransferDenomResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgTransferDenomResponse {
+    return {};
+  },
+
+  toJSON(_: MsgTransferDenomResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgTransferDenomResponse>, I>>(_: I): MsgTransferDenomResponse {
+    const message = createBaseMsgTransferDenomResponse();
+    return message;
+  },
+};
+
 /** Msg defines the NFT Msg service. */
 export interface Msg {
   /** IssueDenom defines a method for issue a denom. */
@@ -1157,11 +1335,15 @@ export interface Msg {
   RevokeNft(request: MsgRevokeNft): Promise<MsgRevokeNftResponse>;
   /** BurnNFT defines a method for burning a nft. */
   BurnNFT(request: MsgBurnNFT): Promise<MsgBurnNFTResponse>;
+  /** TransferDenom defines a method for transferring a denom. */
+  TransferDenom(request: MsgTransferDenom): Promise<MsgTransferDenomResponse>;
 }
 
 export class MsgClientImpl implements Msg {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || "cudosnode.cudosnode.nft.Msg";
     this.rpc = rpc;
     this.IssueDenom = this.IssueDenom.bind(this);
     this.MintNFT = this.MintNFT.bind(this);
@@ -1171,53 +1353,60 @@ export class MsgClientImpl implements Msg {
     this.ApproveAllNft = this.ApproveAllNft.bind(this);
     this.RevokeNft = this.RevokeNft.bind(this);
     this.BurnNFT = this.BurnNFT.bind(this);
+    this.TransferDenom = this.TransferDenom.bind(this);
   }
   IssueDenom(request: MsgIssueDenom): Promise<MsgIssueDenomResponse> {
     const data = MsgIssueDenom.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "IssueDenom", data);
+    const promise = this.rpc.request(this.service, "IssueDenom", data);
     return promise.then((data) => MsgIssueDenomResponse.decode(new _m0.Reader(data)));
   }
 
   MintNFT(request: MsgMintNFT): Promise<MsgMintNFTResponse> {
     const data = MsgMintNFT.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "MintNFT", data);
+    const promise = this.rpc.request(this.service, "MintNFT", data);
     return promise.then((data) => MsgMintNFTResponse.decode(new _m0.Reader(data)));
   }
 
   EditNFT(request: MsgEditNFT): Promise<MsgEditNFTResponse> {
     const data = MsgEditNFT.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "EditNFT", data);
+    const promise = this.rpc.request(this.service, "EditNFT", data);
     return promise.then((data) => MsgEditNFTResponse.decode(new _m0.Reader(data)));
   }
 
   TransferNft(request: MsgTransferNft): Promise<MsgTransferNftResponse> {
     const data = MsgTransferNft.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "TransferNft", data);
+    const promise = this.rpc.request(this.service, "TransferNft", data);
     return promise.then((data) => MsgTransferNftResponse.decode(new _m0.Reader(data)));
   }
 
   ApproveNft(request: MsgApproveNft): Promise<MsgApproveNftResponse> {
     const data = MsgApproveNft.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "ApproveNft", data);
+    const promise = this.rpc.request(this.service, "ApproveNft", data);
     return promise.then((data) => MsgApproveNftResponse.decode(new _m0.Reader(data)));
   }
 
   ApproveAllNft(request: MsgApproveAllNft): Promise<MsgApproveAllNftResponse> {
     const data = MsgApproveAllNft.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "ApproveAllNft", data);
+    const promise = this.rpc.request(this.service, "ApproveAllNft", data);
     return promise.then((data) => MsgApproveAllNftResponse.decode(new _m0.Reader(data)));
   }
 
   RevokeNft(request: MsgRevokeNft): Promise<MsgRevokeNftResponse> {
     const data = MsgRevokeNft.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "RevokeNft", data);
+    const promise = this.rpc.request(this.service, "RevokeNft", data);
     return promise.then((data) => MsgRevokeNftResponse.decode(new _m0.Reader(data)));
   }
 
   BurnNFT(request: MsgBurnNFT): Promise<MsgBurnNFTResponse> {
     const data = MsgBurnNFT.encode(request).finish();
-    const promise = this.rpc.request("cudosnode.cudosnode.nft.Msg", "BurnNFT", data);
+    const promise = this.rpc.request(this.service, "BurnNFT", data);
     return promise.then((data) => MsgBurnNFTResponse.decode(new _m0.Reader(data)));
+  }
+
+  TransferDenom(request: MsgTransferDenom): Promise<MsgTransferDenomResponse> {
+    const data = MsgTransferDenom.encode(request).finish();
+    const promise = this.rpc.request(this.service, "TransferDenom", data);
+    return promise.then((data) => MsgTransferDenomResponse.decode(new _m0.Reader(data)));
   }
 }
 
@@ -1242,7 +1431,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
