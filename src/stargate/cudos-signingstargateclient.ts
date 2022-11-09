@@ -1,16 +1,19 @@
-import { Coin, EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
+import { Coin, coins, EncodeObject, isOfflineDirectSigner, makeAuthInfoBytes, makeSignDoc, OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
 import { SigningStargateClientOptions, SigningStargateClient, GasPrice, DeliverTxResponse, StdFee } from "@cosmjs/stargate";
 import { HttpEndpoint, Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { DEFAULT_GAS_MULTIPLIER, estimateFee } from "../utils";
+import { DEFAULT_GAS_MULTIPLIER, encodeNonce, encodePubKey, estimateFee } from "../utils";
 import { GroupModule } from "./modules/group/module";
 import { NftInfo, NftModule } from "./modules/nft/module";
 import { MsgMultiSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { GravityModule } from "./modules/gravity/module";
+import { StdSignature } from "../amino";
+import { Int53 } from "../math";
 import { MarketplaceModule } from './modules/marketplace/module';
 import { AddressbookModule } from "./modules/addressbook/module";
 import { Royalty } from './modules/marketplace/proto-types/royalty';
 
 export class CudosSigningStargateClient extends SigningStargateClient {
+    private readonly directSigner: OfflineDirectSigner | undefined;
     public readonly groupModule: GroupModule;
     public readonly nftModule: NftModule;
     public readonly gravityModule: GravityModule;
@@ -38,6 +41,29 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         this.gravityModule = new GravityModule(this);
         this.marketplaceModule = new MarketplaceModule(this);
         this.addressbookModule = new AddressbookModule(this);
+
+        if (isOfflineDirectSigner(signer)) {
+            this.directSigner = signer
+        }
+    }
+
+    public async signNonceMsg(signerAddress: string, nonce: number): Promise<{ signature: StdSignature, chainId: string, sequence: number, accountNumber: number }> {
+        const acc = (await this.directSigner!.getAccounts()).find(a => a.address === signerAddress)
+        const pubkey = encodePubKey(acc!.pubkey)
+
+        const gasLimit = Int53.fromString("0").toNumber();
+        const { accountNumber, sequence } = await this.getSequence(signerAddress);
+        const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], coins(0, "acudos"), gasLimit);
+
+
+        const txBody = encodeNonce(nonce);
+        const bodyBytes = this.registry.encode(txBody);
+        const chainId = await this.getChainId()
+
+        const signDoc = makeSignDoc(bodyBytes, authInfoBytes, chainId, accountNumber);
+        const { signature } = await this.directSigner!.signDirect(signerAddress, signDoc)
+
+        return { signature, chainId, sequence, accountNumber };
     }
 
     //easy to use with estimated fee
@@ -204,7 +230,7 @@ export class CudosSigningStargateClient extends SigningStargateClient {
     /////// Gravity Module Msg's
 
     //easy to use with estimated fee
-     public async gravitySendToEth(
+    public async gravitySendToEth(
         sender: string,
         ethDest: string,
         amount: Coin,
@@ -225,7 +251,7 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         memo?: string,
         gasMultiplier?: number,
     ): Promise<DeliverTxResponse> {
-        const { msg, fee } = await this.gravityModule.msgSetMinFeeTransferToEth(sender,minFee, gasPrice, gasMultiplier, memo);
+        const { msg, fee } = await this.gravityModule.msgSetMinFeeTransferToEth(sender, minFee, gasPrice, gasMultiplier, memo);
         return this.signAndBroadcast(sender, [msg], fee, memo);
     }
 
@@ -237,7 +263,7 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         memo?: string,
         gasMultiplier?: number,
     ): Promise<DeliverTxResponse> {
-        const { msg, fee } = await this.gravityModule.msgCancelSendToEth(transactionId,sender, gasPrice, gasMultiplier, memo);
+        const { msg, fee } = await this.gravityModule.msgCancelSendToEth(transactionId, sender, gasPrice, gasMultiplier, memo);
         return this.signAndBroadcast(sender, [msg], fee, memo);
     }
 
