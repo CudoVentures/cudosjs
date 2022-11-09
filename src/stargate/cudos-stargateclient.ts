@@ -1,17 +1,21 @@
-import { IndexedTx, QueryClient, StargateClient, StargateClientOptions } from "@cosmjs/stargate";
-import { HttpEndpoint, Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { GroupQueryClient } from "./modules/group/clients/queryClient";
-import { NFTQueryClient } from "./modules/nft/clients/queryClient";
-import { GravityQueryClient } from "./modules/gravity/clients/queryClient";
+import { IndexedTx, StargateClient, StargateClientOptions } from '@cosmjs/stargate';
+import { HttpEndpoint, Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { GroupQueryClient } from './modules/group/clients/queryClient';
+import { NFTQueryClient } from './modules/nft/clients/queryClient';
+import { GravityQueryClient } from './modules/gravity/clients/queryClient';
+import { MarketplaceQueryClient } from './modules/marketplace/clients/queryClient';
+import { AddressbookQueryClient } from './modules/addressbook/clients/queryClient';
+import { getFullRegistry } from './full-registry';
 
-import { getFullRegistry } from "./full-registry";
+import { DecodedTxRaw, decodeTxRaw, Registry } from '@cosmjs/proto-signing';
 
-import { DecodedTxRaw, DecodeObject, decodeTxRaw, Registry } from "@cosmjs/proto-signing";
 
 export class CudosStargateClient extends StargateClient {
     private readonly groupQueryClient: GroupQueryClient;
     private readonly nftQueryClient: NFTQueryClient;
-    private readonly gravityQueryClient: GravityQueryClient
+    private readonly gravityQueryClient: GravityQueryClient;
+    private readonly marketplaceQueryClient: MarketplaceQueryClient;
+    private readonly addressbookQueryClient: AddressbookQueryClient;
     public readonly  registry: Registry
 
 
@@ -28,6 +32,8 @@ export class CudosStargateClient extends StargateClient {
         this.groupQueryClient = new GroupQueryClient(tmClient)
         this.nftQueryClient =  new NFTQueryClient(tmClient)
         this.gravityQueryClient = new GravityQueryClient(tmClient)
+        this.marketplaceQueryClient = new MarketplaceQueryClient(tmClient)
+        this.addressbookQueryClient = new AddressbookQueryClient(tmClient)
         this.registry = getFullRegistry()
     }
 
@@ -41,6 +47,14 @@ export class CudosStargateClient extends StargateClient {
 
     get gravityModule (): GravityQueryClient{
         return this.gravityQueryClient
+    }
+
+    get marketplaceModule(): MarketplaceQueryClient {
+        return this.marketplaceQueryClient
+    }
+
+    get addressbookModule(): AddressbookQueryClient {
+        return this.addressbookQueryClient
     }
 
     public async decodeQryResponse(resp: IndexedTx){

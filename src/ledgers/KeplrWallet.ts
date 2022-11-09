@@ -147,8 +147,6 @@ export class KeplrWallet extends Ledger {
         } catch (error) {
             throw new Error('Failed to connect to Keplr!');
         }
-
-
     }
 
     async disconnect(): Promise<void> {
@@ -163,7 +161,7 @@ export class KeplrWallet extends Ledger {
         try {
             const offlineSigner = window.getOfflineSigner(this.keplrWalletConfig.CHAIN_ID);
             const account = (await offlineSigner.getAccounts())[0];
-
+    
             const url = `${this.keplrWalletConfig.API}/cosmos/bank/v1beta1/balances/${account.address}/by_denom?denom=${CudosNetworkConsts.CURRENCY_DENOM}`;
             const amount = (await (await fetch(url)).json()).balance.amount;
 
@@ -171,6 +169,15 @@ export class KeplrWallet extends Ledger {
         } catch (e) {
             console.log(e);
             throw new Error('Failed to get balance!');
+        }
+    }
+
+    async getName(): Promise<string> {
+        try {
+            return (await window.keplr.getKey(this.keplrWalletConfig.CHAIN_ID)).name;
+        } catch (e) {
+            console.log(e);
+            throw new Error('Failed to get name.');
         }
     }
 

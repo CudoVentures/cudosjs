@@ -1,14 +1,13 @@
 
-import { DirectSecp256k1HdWallet, SigningStargateClient, StargateClient, GasPrice, DirectSecp256k1Wallet, AccountData } from '../src/index';
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { DirectSecp256k1HdWallet, SigningStargateClient, StargateClient, GasPrice, AccountData } from '../src/index';
 import { NftInfo } from '../src/stargate/modules/nft/module';
 
-describe('alpha contract', () => {
+describe('nft', () => {
   //mnemonics taken from cudos blast default accounts
-  const mnemonic1 = 'ordinary witness such toddler tag mouse helmet perfect venue eyebrow upgrade rabbit'
+  const mnemonic1 = 'rebel wet poet torch carpet gaze axis ribbon approve depend inflict menu'
   const mnemonic2 = 'course hurdle stand heart rescue trap upset cousin dish embody business equip'
 
-  const gasPrice = GasPrice.fromString('1acudos');
+  const gasPrice = GasPrice.fromString('5000000000000acudos');
 
   const correctDenom = {
     creator: '',
@@ -16,6 +15,10 @@ describe('alpha contract', () => {
     name: 'test-denom-name',
     symbol: 'test-denom-symbol',
     schema: 'test-denom-schema',
+    traits: '',
+    description: '',
+    data: '',
+    minter: ''
   }
 
   const correctToken = {
@@ -54,18 +57,18 @@ describe('alpha contract', () => {
 
   // positive test case
   test('issue denom - happy path', async () => {
-    await expect(faucet.nftIssueDenom(faucetAddress, correctDenom.id, correctDenom.name, correctDenom.schema, correctDenom.symbol, gasPrice))
+    await expect(faucet.nftIssueDenom(faucetAddress, correctDenom.id, correctDenom.name, correctDenom.schema, correctDenom.symbol, correctDenom.traits, correctDenom.minter, correctDenom.description, correctDenom.data, gasPrice))
       .resolves.not.toThrowError();
     return expect(queryClient.nftModule.getNftDenom(correctDenom.id)).resolves.toEqual({ denom: correctDenom });
   })
 
   test('issue denom - fail denom id exists', async () => {
-    return expect(faucet.nftIssueDenom(faucetAddress, correctDenom.id, correctDenom.name, correctDenom.schema, correctDenom.symbol, gasPrice))
+    return expect(faucet.nftIssueDenom(faucetAddress, correctDenom.id, correctDenom.name, correctDenom.schema, correctDenom.symbol, correctDenom.traits, correctDenom.minter, correctDenom.description, correctDenom.data, gasPrice))
       .rejects.toThrow(`Query failed with (18): failed to execute message; message index: 0: denomID ${correctDenom.id} has already exists: invalid denom: invalid request`);
   })
 
   test('issue denom - fail invalid denom', async () => {
-    return expect(faucet.nftIssueDenom(faucetAddress, 'DenomIdCantStartWithUpperCase', correctDenom.name, correctDenom.schema, correctDenom.symbol, gasPrice))
+    return expect(faucet.nftIssueDenom(faucetAddress, 'DenomIdCantStartWithUpperCase', correctDenom.name, correctDenom.schema, correctDenom.symbol, correctDenom.traits, correctDenom.minter, correctDenom.description, correctDenom.data, gasPrice))
       .rejects.toThrow(`Invalid denom id - only accepts lowercase alphanumeric characters, and begin with an english letter`);
   })
 

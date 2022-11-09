@@ -51,6 +51,10 @@ export class NftModule {
         sender: string,
         contractAddressSigner: string,
         symbol: string,
+        traits: string,
+        minter: string,
+        description: string,
+        data: string,
         gasPrice: GasPrice,
         gasMultiplier: number = DEFAULT_GAS_MULTIPLIER,
         memo: string = ""
@@ -67,6 +71,10 @@ export class NftModule {
                 sender,
                 contractAddressSigner,
                 symbol,
+                traits,
+                minter,
+                description,
+                data
             }),
         };
 

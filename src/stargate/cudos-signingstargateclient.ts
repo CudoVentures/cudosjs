@@ -8,12 +8,18 @@ import { MsgMultiSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { GravityModule } from "./modules/gravity/module";
 import { StdSignature } from "../amino";
 import { Int53 } from "../math";
+import { MarketplaceModule } from './modules/marketplace/module';
+import { AddressbookModule } from "./modules/addressbook/module";
+import { Royalty } from './modules/marketplace/proto-types/royalty';
 
 export class CudosSigningStargateClient extends SigningStargateClient {
     private readonly directSigner: OfflineDirectSigner | undefined;
     public readonly groupModule: GroupModule;
     public readonly nftModule: NftModule;
     public readonly gravityModule: GravityModule;
+    public readonly marketplaceModule: MarketplaceModule;
+    public readonly addressbookModule: AddressbookModule;
+
 
     public static override async connectWithSigner(
         endpoint: string | HttpEndpoint,
@@ -33,10 +39,31 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         this.groupModule = new GroupModule(this);
         this.nftModule = new NftModule(this);
         this.gravityModule = new GravityModule(this);
+        this.marketplaceModule = new MarketplaceModule(this);
+        this.addressbookModule = new AddressbookModule(this);
 
         if (isOfflineDirectSigner(signer)) {
             this.directSigner = signer
         }
+    }
+
+    public async signNonceMsg(signerAddress: string, nonce: number): Promise<{ signature: StdSignature, chainId: string, sequence: number, accountNumber: number }> {
+        const acc = (await this.directSigner!.getAccounts()).find(a => a.address === signerAddress)
+        const pubkey = encodePubKey(acc!.pubkey)
+
+        const gasLimit = Int53.fromString("0").toNumber();
+        const { accountNumber, sequence } = await this.getSequence(signerAddress);
+        const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], coins(0, "acudos"), gasLimit);
+
+
+        const txBody = encodeNonce(nonce);
+        const bodyBytes = this.registry.encode(txBody);
+        const chainId = await this.getChainId()
+
+        const signDoc = makeSignDoc(bodyBytes, authInfoBytes, chainId, accountNumber);
+        const { signature } = await this.directSigner!.signDirect(signerAddress, signDoc)
+
+        return { signature, chainId, sequence, accountNumber };
     }
 
     //easy to use with estimated fee
@@ -46,11 +73,15 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         name: string,
         schema: string,
         symbol: string,
+        traits: string,
+        minter: string,
+        description: string,
+        data: string,
         gasPrice: GasPrice,
         memo?: string,
         gasMultiplier?: number,
     ): Promise<DeliverTxResponse> {
-        const { msg, fee } = await this.nftModule.msgIssueDenom(id, name, schema, sender, '', symbol, gasPrice, gasMultiplier, memo);
+        const { msg, fee } = await this.nftModule.msgIssueDenom(id, name, schema, sender, '', symbol, traits, minter, description, data, gasPrice, gasMultiplier, memo);
         return this.signAndBroadcast(sender, [msg], fee, memo);
     }
 
@@ -236,22 +267,186 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         return this.signAndBroadcast(sender, [msg], fee, memo);
     }
 
-    public async signNonceMsg(signerAddress: string, nonce: number): Promise<{ signature: StdSignature, chainId: string, sequence: number, accountNumber: number }> {
-        const acc = (await this.directSigner!.getAccounts()).find(a => a.address === signerAddress)
-        const pubkey = encodePubKey(acc!.pubkey)
+    public async marketplaceCreateCollection(
+        creator: string,
+        id: string,
+        name: string,
+        schema: string,
+        symbol: string,
+        traits: string,
+        description: string,
+        minter: string,
+        data: string,
+        mintRoyalties: Royalty[],
+        resaleRoyalties: Royalty[],
+        verified: boolean,
+        gasPrice: GasPrice,
+        gasMultiplier?: number,
+        memo?: string
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgCreateCollection(creator, id, name, schema, symbol, traits, description,
+            minter, data, mintRoyalties, resaleRoyalties, verified, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
 
-        const gasLimit = Int53.fromString("0").toNumber();
-        const { accountNumber, sequence } = await this.getSequence(signerAddress);
-        const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], coins(0, "acudos"), gasLimit);
+    public async marketplacePublishCollection(
+        creator: string,
+        denomId: string,
+        mintRoyalties: Royalty[],
+        resaleRoyalties: Royalty[],
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgPublishCollection(creator, denomId, mintRoyalties, resaleRoyalties, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
 
+    public async marketplacePublishNft(
+        creator: string,
+        tokenId: string,
+        denomId: string,
+        price: Coin,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgPublishNft(creator, tokenId, denomId, price, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
 
-        const txBody = encodeNonce(nonce);
-        const bodyBytes = this.registry.encode(txBody);
-        const chainId = await this.getChainId()
+    public async marketplaceBuyNft(
+        creator: string,
+        id: Long,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgBuyNft(creator, id, gasPrice, gasMultiplier);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
 
-        const signDoc = makeSignDoc(bodyBytes, authInfoBytes, chainId, accountNumber);
-        const { signature } = await this.directSigner!.signDirect(signerAddress, signDoc)
+    public async marketplaceMintNft(
+        creator: string,
+        denomId: string,
+        recipient: string,
+        price: Coin,
+        name: string,
+        uri: string,
+        data: string,
+        uid: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgMintNft(creator, denomId, recipient, price, name, uri, data, uid, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
 
-        return { signature, chainId, sequence, accountNumber };
+    public async marketplaceRemoveNft(
+        creator: string,
+        id: Long,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgRemoveNft(creator, id, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async marketplaceVerifyCollection(
+        creator: string,
+        id: Long,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgVerifyCollection(creator, id, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async marketplaceUnverifyCollection(
+        creator: string,
+        id: Long,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgUnverifyCollection(creator, id, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async marketplaceTransferAdminPermission(
+        creator: string,
+        newAdmin: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgTransferAdminPermission(creator, newAdmin, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async marketplaceUpdateRoyalties(
+        creator: string,
+        id: Long,
+        mintRoyalties: Royalty[],
+        resaleRoyalties: Royalty[],
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgUpdateRoyalties(creator, id, mintRoyalties, resaleRoyalties, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async marketplaceUpdatePrice(
+        creator: string,
+        id: Long,
+        price: Coin,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgUpdatePrice(creator, id, price, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async addressbookCreateAddress(
+        creator: string,
+        network: string,
+        label: string,
+        value: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.addressbookModule.msgCreateAddress(creator, network, label, value, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async addressbookUpdateAddress(
+        creator: string,
+        network: string,
+        label: string,
+        value: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.addressbookModule.msgUpdateAddress(creator, network, label, value, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
+    public async addressbookDeleteAddress(
+        creator: string,
+        network: string,
+        label: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.addressbookModule.msgDeleteAddress(creator, network, label, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
     }
 }
