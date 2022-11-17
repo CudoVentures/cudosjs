@@ -34,7 +34,9 @@
     "@cosmjs/stargate": "^0.28.4",
     "@cosmjs/tendermint-rpc": "^0.28.4",
     "bignumber.js": "^9.0.2",
-    "yarn": "^1.22.19"
+    "yarn": "^1.22.19",
+    "@cosmostation/extension-client": "^0.1.9",
+    "@cosmostation/cosmos-client": "^0.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",

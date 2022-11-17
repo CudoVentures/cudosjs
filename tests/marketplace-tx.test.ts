@@ -2,6 +2,7 @@
 import { DirectSecp256k1HdWallet, SigningStargateClient, StargateClient, GasPrice, AccountData, PageRequest } from '../src/index';
 import { coin } from '@cosmjs/amino';
 import Long from 'long';
+import { Royalty } from '../src/stargate/modules/marketplace/proto-types/royalty';
 
 describe('marketplace', () => {
 
@@ -42,7 +43,7 @@ describe('marketplace', () => {
 
     const denomId = 'test';
 
-    await faucet.marketplaceCreateCollection(faucetAddress, denomId, denomId, '', denomId, '', '', '', '', [], [], false, gasPrice);
+    await faucet.marketplaceCreateCollection(faucetAddress, denomId, denomId, '', denomId, '', '', '', '', [{address: faucetAddress, percent: '100'}], [{address: faucetAddress, percent: '10'}], false, gasPrice);
 
     let collectionId = (await queryClient.marketplaceModule.getCollectionByDenomId(denomId)).Collection.id.toNumber();
 
