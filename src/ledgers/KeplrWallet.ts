@@ -24,7 +24,6 @@ export interface KeplrWalletConfig {
 export class KeplrWallet extends Ledger {
 
     keplrWalletConfig: KeplrWalletConfig;
-    addressChangeCallbacks: ((address: string) => void)[];
 
     constructor(keplrWalletConfig: KeplrWalletConfig) {
         super();
@@ -183,14 +182,6 @@ export class KeplrWallet extends Ledger {
 
     isConnected(): boolean {
         return this.connected === true;
-    }
-
-    addAddressChangeCallback(callback: (address: string) => void) {
-        this.addressChangeCallbacks.push(callback);
-    }
-
-    removeAddressChangeCallback(callback: (address: string) => void) {
-        this.addressChangeCallbacks = this.addressChangeCallbacks.filter((func: (address: string) => void) => func === callback);
     }
 
     private accountChangeEventListener = async (): Promise<void> => {
