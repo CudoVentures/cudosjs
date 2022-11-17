@@ -9,12 +9,27 @@ export type ContractMsgInstantiate = {
         address: string,
         amount: string
     }[],
-    mint?: {
-        // Only minter is authorised to mint
-        minter: string,
-        // cap is a hard cap on total supply that can be achieved by minting.
-        // If unset, there is unlimited cap.
-        cap?: string | null | undefined
+    token_type: {
+        // no mint, no burn
+        standard: {}
+    } | { 
+        // no mint, only burn
+        burnable: {}
+    } | {
+        // no burn, mint with cap
+        mintable: {
+            // Minter address
+            // Only minter is authorised to mint
+            minter: string,
+            // cap is a hard cap on total supply that can be achieved by minting
+            cap: string
+        }
+    } | {
+        // burn, mint without cap
+        unlimited: {
+            // Minter address
+            minter: string
+        }
     },
     marketing?: {
         // A URL pointing to the project behind this token
