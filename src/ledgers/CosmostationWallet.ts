@@ -32,9 +32,9 @@ export class CosmostationWallet extends Ledger {
         try {
             this.provider = await cosmos()
 
-            const activatedChains = await this.provider.getActivatedChains()
+            const activatedChainIds = await this.provider.getActivatedChainIds()
 
-            if (!activatedChains.includes(this.cosmostationWalletConfig.CHAIN_NAME)) {
+            if (!activatedChainIds.includes(this.cosmostationWalletConfig.CHAIN_ID)) {
                 await this.provider.addChain({
                     chainId: this.cosmostationWalletConfig.CHAIN_ID,
 
@@ -59,7 +59,7 @@ export class CosmostationWallet extends Ledger {
                     }
                 })
             }
-            const account = await this.provider.requestAccount(this.cosmostationWalletConfig.CHAIN_NAME)
+            const account = await this.provider.requestAccount(this.cosmostationWalletConfig.CHAIN_ID)
 
             this.accountAddress = account.address;
             this.connected = true;
