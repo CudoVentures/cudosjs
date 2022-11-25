@@ -5,19 +5,14 @@ import _m0 from "protobufjs/minimal";
 export const protobufPackage = "cudoventures.cudosnode.marketplace";
 
 /** Params defines the parameters for the module. */
-export interface Params {
-  admins: string[];
-}
+export interface Params {}
 
 function createBaseParams(): Params {
-  return { admins: [] };
+  return {};
 }
 
 export const Params = {
-  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.admins) {
-      writer.uint32(10).string(v!);
-    }
+  encode(_: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
@@ -28,9 +23,6 @@ export const Params = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.admins.push(reader.string());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -39,23 +31,17 @@ export const Params = {
     return message;
   },
 
-  fromJSON(object: any): Params {
-    return { admins: Array.isArray(object?.admins) ? object.admins.map((e: any) => String(e)) : [] };
+  fromJSON(_: any): Params {
+    return {};
   },
 
-  toJSON(message: Params): unknown {
+  toJSON(_: Params): unknown {
     const obj: any = {};
-    if (message.admins) {
-      obj.admins = message.admins.map((e) => e);
-    } else {
-      obj.admins = [];
-    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
+  fromPartial<I extends Exact<DeepPartial<Params>, I>>(_: I): Params {
     const message = createBaseParams();
-    message.admins = object.admins?.map((e) => e) || [];
     return message;
   },
 };

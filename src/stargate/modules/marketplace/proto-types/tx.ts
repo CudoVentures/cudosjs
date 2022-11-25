@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { Coin } from "../cosmos/base/v1beta1/coin";
 import { Royalty } from "./royalty";
 
 export const protobufPackage = "cudoventures.cudosnode.marketplace";
@@ -65,13 +65,6 @@ export interface MsgUnverifyCollection {
 
 export interface MsgUnverifyCollectionResponse {}
 
-export interface MsgTransferAdminPermission {
-  creator: string;
-  newAdmin: string;
-}
-
-export interface MsgTransferAdminPermissionResponse {}
-
 export interface MsgCreateCollection {
   creator: string;
   id: string;
@@ -105,6 +98,20 @@ export interface MsgUpdatePrice {
 }
 
 export interface MsgUpdatePriceResponse {}
+
+export interface MsgAddAdmin {
+  creator: string;
+  address: string;
+}
+
+export interface MsgAddAdminResponse {}
+
+export interface MsgRemoveAdmin {
+  creator: string;
+  address: string;
+}
+
+export interface MsgRemoveAdminResponse {}
 
 function createBaseMsgPublishCollection(): MsgPublishCollection {
   return { creator: "", denomId: "", mintRoyalties: [], resaleRoyalties: [] };
@@ -895,107 +902,6 @@ export const MsgUnverifyCollectionResponse = {
   },
 };
 
-function createBaseMsgTransferAdminPermission(): MsgTransferAdminPermission {
-  return { creator: "", newAdmin: "" };
-}
-
-export const MsgTransferAdminPermission = {
-  encode(message: MsgTransferAdminPermission, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.creator !== "") {
-      writer.uint32(10).string(message.creator);
-    }
-    if (message.newAdmin !== "") {
-      writer.uint32(18).string(message.newAdmin);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): MsgTransferAdminPermission {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgTransferAdminPermission();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.creator = reader.string();
-          break;
-        case 2:
-          message.newAdmin = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgTransferAdminPermission {
-    return {
-      creator: isSet(object.creator) ? String(object.creator) : "",
-      newAdmin: isSet(object.newAdmin) ? String(object.newAdmin) : "",
-    };
-  },
-
-  toJSON(message: MsgTransferAdminPermission): unknown {
-    const obj: any = {};
-    message.creator !== undefined && (obj.creator = message.creator);
-    message.newAdmin !== undefined && (obj.newAdmin = message.newAdmin);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<MsgTransferAdminPermission>, I>>(
-    object: I,
-  ): MsgTransferAdminPermission {
-    const message = createBaseMsgTransferAdminPermission();
-    message.creator = object.creator ?? "";
-    message.newAdmin = object.newAdmin ?? "";
-    return message;
-  },
-};
-
-function createBaseMsgTransferAdminPermissionResponse(): MsgTransferAdminPermissionResponse {
-  return {};
-}
-
-export const MsgTransferAdminPermissionResponse = {
-  encode(_: MsgTransferAdminPermissionResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): MsgTransferAdminPermissionResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgTransferAdminPermissionResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(_: any): MsgTransferAdminPermissionResponse {
-    return {};
-  },
-
-  toJSON(_: MsgTransferAdminPermissionResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<MsgTransferAdminPermissionResponse>, I>>(
-    _: I,
-  ): MsgTransferAdminPermissionResponse {
-    const message = createBaseMsgTransferAdminPermissionResponse();
-    return message;
-  },
-};
-
 function createBaseMsgCreateCollection(): MsgCreateCollection {
   return {
     creator: "",
@@ -1444,6 +1350,200 @@ export const MsgUpdatePriceResponse = {
   },
 };
 
+function createBaseMsgAddAdmin(): MsgAddAdmin {
+  return { creator: "", address: "" };
+}
+
+export const MsgAddAdmin = {
+  encode(message: MsgAddAdmin, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.address !== "") {
+      writer.uint32(18).string(message.address);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAddAdmin {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAddAdmin();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.address = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAddAdmin {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      address: isSet(object.address) ? String(object.address) : "",
+    };
+  },
+
+  toJSON(message: MsgAddAdmin): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.address !== undefined && (obj.address = message.address);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddAdmin>, I>>(object: I): MsgAddAdmin {
+    const message = createBaseMsgAddAdmin();
+    message.creator = object.creator ?? "";
+    message.address = object.address ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgAddAdminResponse(): MsgAddAdminResponse {
+  return {};
+}
+
+export const MsgAddAdminResponse = {
+  encode(_: MsgAddAdminResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAddAdminResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAddAdminResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgAddAdminResponse {
+    return {};
+  },
+
+  toJSON(_: MsgAddAdminResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddAdminResponse>, I>>(_: I): MsgAddAdminResponse {
+    const message = createBaseMsgAddAdminResponse();
+    return message;
+  },
+};
+
+function createBaseMsgRemoveAdmin(): MsgRemoveAdmin {
+  return { creator: "", address: "" };
+}
+
+export const MsgRemoveAdmin = {
+  encode(message: MsgRemoveAdmin, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.address !== "") {
+      writer.uint32(18).string(message.address);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRemoveAdmin {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRemoveAdmin();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.address = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRemoveAdmin {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      address: isSet(object.address) ? String(object.address) : "",
+    };
+  },
+
+  toJSON(message: MsgRemoveAdmin): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.address !== undefined && (obj.address = message.address);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveAdmin>, I>>(object: I): MsgRemoveAdmin {
+    const message = createBaseMsgRemoveAdmin();
+    message.creator = object.creator ?? "";
+    message.address = object.address ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgRemoveAdminResponse(): MsgRemoveAdminResponse {
+  return {};
+}
+
+export const MsgRemoveAdminResponse = {
+  encode(_: MsgRemoveAdminResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRemoveAdminResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRemoveAdminResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgRemoveAdminResponse {
+    return {};
+  },
+
+  toJSON(_: MsgRemoveAdminResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveAdminResponse>, I>>(_: I): MsgRemoveAdminResponse {
+    const message = createBaseMsgRemoveAdminResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   PublishCollection(request: MsgPublishCollection): Promise<MsgPublishCollectionResponse>;
@@ -1453,11 +1553,12 @@ export interface Msg {
   RemoveNft(request: MsgRemoveNft): Promise<MsgRemoveNftResponse>;
   VerifyCollection(request: MsgVerifyCollection): Promise<MsgVerifyCollectionResponse>;
   UnverifyCollection(request: MsgUnverifyCollection): Promise<MsgUnverifyCollectionResponse>;
-  TransferAdminPermission(request: MsgTransferAdminPermission): Promise<MsgTransferAdminPermissionResponse>;
   CreateCollection(request: MsgCreateCollection): Promise<MsgCreateCollectionResponse>;
   UpdateRoyalties(request: MsgUpdateRoyalties): Promise<MsgUpdateRoyaltiesResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   UpdatePrice(request: MsgUpdatePrice): Promise<MsgUpdatePriceResponse>;
+  AddAdmin(request: MsgAddAdmin): Promise<MsgAddAdminResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RemoveAdmin(request: MsgRemoveAdmin): Promise<MsgRemoveAdminResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -1473,10 +1574,11 @@ export class MsgClientImpl implements Msg {
     this.RemoveNft = this.RemoveNft.bind(this);
     this.VerifyCollection = this.VerifyCollection.bind(this);
     this.UnverifyCollection = this.UnverifyCollection.bind(this);
-    this.TransferAdminPermission = this.TransferAdminPermission.bind(this);
     this.CreateCollection = this.CreateCollection.bind(this);
     this.UpdateRoyalties = this.UpdateRoyalties.bind(this);
     this.UpdatePrice = this.UpdatePrice.bind(this);
+    this.AddAdmin = this.AddAdmin.bind(this);
+    this.RemoveAdmin = this.RemoveAdmin.bind(this);
   }
   PublishCollection(request: MsgPublishCollection): Promise<MsgPublishCollectionResponse> {
     const data = MsgPublishCollection.encode(request).finish();
@@ -1520,12 +1622,6 @@ export class MsgClientImpl implements Msg {
     return promise.then((data) => MsgUnverifyCollectionResponse.decode(new _m0.Reader(data)));
   }
 
-  TransferAdminPermission(request: MsgTransferAdminPermission): Promise<MsgTransferAdminPermissionResponse> {
-    const data = MsgTransferAdminPermission.encode(request).finish();
-    const promise = this.rpc.request(this.service, "TransferAdminPermission", data);
-    return promise.then((data) => MsgTransferAdminPermissionResponse.decode(new _m0.Reader(data)));
-  }
-
   CreateCollection(request: MsgCreateCollection): Promise<MsgCreateCollectionResponse> {
     const data = MsgCreateCollection.encode(request).finish();
     const promise = this.rpc.request(this.service, "CreateCollection", data);
@@ -1542,6 +1638,18 @@ export class MsgClientImpl implements Msg {
     const data = MsgUpdatePrice.encode(request).finish();
     const promise = this.rpc.request(this.service, "UpdatePrice", data);
     return promise.then((data) => MsgUpdatePriceResponse.decode(new _m0.Reader(data)));
+  }
+
+  AddAdmin(request: MsgAddAdmin): Promise<MsgAddAdminResponse> {
+    const data = MsgAddAdmin.encode(request).finish();
+    const promise = this.rpc.request(this.service, "AddAdmin", data);
+    return promise.then((data) => MsgAddAdminResponse.decode(new _m0.Reader(data)));
+  }
+
+  RemoveAdmin(request: MsgRemoveAdmin): Promise<MsgRemoveAdminResponse> {
+    const data = MsgRemoveAdmin.encode(request).finish();
+    const promise = this.rpc.request(this.service, "RemoveAdmin", data);
+    return promise.then((data) => MsgRemoveAdminResponse.decode(new _m0.Reader(data)));
   }
 }
 
