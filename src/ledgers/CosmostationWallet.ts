@@ -7,6 +7,12 @@ import { CudosNetworkConsts } from '../utils';
 
 declare let fetch: (url: string) => Promise<any>;
 
+
+declare let window: {
+    cosmostation: any;
+}
+
+
 export interface CosmostationWalletConfig {
     CHAIN_ID: string,
     CHAIN_NAME: string,

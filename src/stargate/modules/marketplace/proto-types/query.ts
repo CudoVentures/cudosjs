@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { PageRequest, PageResponse } from "cosmjs-types/cosmos/base/query/v1beta1/pagination";
 import { Collection } from "./collection";
 import { Nft } from "./nft";
 import { Params } from "./params";
