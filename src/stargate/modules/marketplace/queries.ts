@@ -10,7 +10,8 @@ import {
     QueryCollectionByDenomIdResponse,
     QueryGetNftResponse,
     QueryAllNftResponse,
-    QueryParamsResponse
+    QueryParamsResponse,
+    QueryListAdminsResponse
 } from './proto-types/query';
 
 export interface MarketplaceExtension {
@@ -20,7 +21,8 @@ export interface MarketplaceExtension {
         readonly collectionByDenomId: (denomId: string) => Promise<QueryCollectionByDenomIdResponse>,
         readonly nft: (id: Long) => Promise<QueryGetNftResponse>,
         readonly allNfts: (pagination?: PageRequest) => Promise<QueryAllNftResponse>,
-        readonly params: () => Promise<QueryParamsResponse>
+        readonly params: () => Promise<QueryParamsResponse>,
+        readonly admins: () => Promise<QueryListAdminsResponse>
     }
 }
 
@@ -47,6 +49,9 @@ export function setupMarketplaceExtension(base: QueryClient): MarketplaceExtensi
             },
             params: async() => {
                 return queryService.Params({});
+            },
+            admins: async() => {
+                return queryService.ListAdmins({});
             }
         }
     };

@@ -1,7 +1,7 @@
 import { MsgCreateCollection, MsgPublishCollection, MsgPublishNft,
         MsgBuyNft, MsgUpdateRoyalties, MsgUpdatePrice,
         MsgRemoveNft, MsgVerifyCollection, MsgUnverifyCollection,
-        MsgMintNft, MsgTransferAdminPermission } from './proto-types/tx';
+        MsgMintNft, MsgAddAdmin, MsgRemoveAdmin } from './proto-types/tx';
 
 const PREFIX = '/cudoventures.cudosnode.marketplace.';
 
@@ -55,7 +55,12 @@ export const msgMintNft = {
     type: MsgMintNft
 };
 
-export const msgTransferAdminPermission = {
-    typeUrl: PREFIX.concat('MsgTransferAdminPermission'),
-    type: MsgTransferAdminPermission
+export const msgAddAdmin = {
+    typeUrl: PREFIX.concat('MsgAddAdmin'),
+    type: MsgAddAdmin
+};
+
+export const msgRemoveAdmin = {
+    typeUrl: PREFIX.concat('MsgRemoveAdmin'),
+    type: MsgRemoveAdmin
 };

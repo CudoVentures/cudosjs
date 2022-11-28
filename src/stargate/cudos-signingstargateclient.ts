@@ -376,16 +376,28 @@ export class CudosSigningStargateClient extends SigningStargateClient {
         return this.signAndBroadcast(creator, [msg], fee, memo);
     }
 
-    public async marketplaceTransferAdminPermission(
+    public async marketplaceAddAdmin(
         creator: string,
-        newAdmin: string,
+        address: string,
         gasPrice: GasPrice,
         gasMultiplier = DEFAULT_GAS_MULTIPLIER,
         memo = ""
     ): Promise<DeliverTxResponse> {
-        const { msg, fee } = await this.marketplaceModule.msgTransferAdminPermission(creator, newAdmin, gasPrice, gasMultiplier, memo);
+        const { msg, fee } = await this.marketplaceModule.msgAddAdmin(creator, address, gasPrice, gasMultiplier, memo);
         return this.signAndBroadcast(creator, [msg], fee, memo);
     }
+
+    public async marketplaceRemoveAdmin(
+        creator: string,
+        address: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<DeliverTxResponse> {
+        const { msg, fee } = await this.marketplaceModule.msgAddAdmin(creator, address, gasPrice, gasMultiplier, memo);
+        return this.signAndBroadcast(creator, [msg], fee, memo);
+    }
+
 
     public async marketplaceUpdateRoyalties(
         creator: string,

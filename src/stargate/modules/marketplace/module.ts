@@ -4,12 +4,12 @@ import { GasPrice, StdFee } from '../..';
 
 import { msgCreateCollection, msgPublishCollection, msgBuyNft, msgPublishNft, msgMintNft,
         msgRemoveNft, msgUpdatePrice, msgUpdateRoyalties, msgVerifyCollection, msgUnverifyCollection,
-        msgTransferAdminPermission } from './types';
+        msgAddAdmin, msgRemoveAdmin } from './types';
 
 import { MsgCreateCollection, MsgPublishCollection, MsgPublishNft,
         MsgBuyNft, MsgUpdateRoyalties, MsgUpdatePrice,
         MsgRemoveNft, MsgVerifyCollection, MsgUnverifyCollection,
-        MsgMintNft, MsgTransferAdminPermission } from './proto-types/tx';
+        MsgMintNft, MsgAddAdmin, MsgRemoveAdmin } from './proto-types/tx';
 
 import { Royalty } from './proto-types/royalty';
 
@@ -30,7 +30,8 @@ export class MarketplaceModule {
             msgUpdateRoyalties,
             msgVerifyCollection,
             msgUnverifyCollection,
-            msgTransferAdminPermission
+            msgAddAdmin,
+            msgRemoveAdmin
         ]);
     }
 
@@ -264,19 +265,43 @@ export class MarketplaceModule {
         }
     }
 
-    public async msgTransferAdminPermission(
+    public async msgAddAdmin(
         creator: string,
-        newAdmin: string,
+        address: string,
         gasPrice: GasPrice,
         gasMultiplier = DEFAULT_GAS_MULTIPLIER,
         memo = ""
     ): Promise<{ msg: EncodeObject, fee: StdFee }> {
 
         const msgEncoded = {
-            typeUrl: msgTransferAdminPermission.typeUrl,
-            value: MsgTransferAdminPermission.fromPartial({
+            typeUrl: msgAddAdmin.typeUrl,
+            value: MsgAddAdmin.fromPartial({
                 creator: creator,
-                newAdmin: newAdmin
+                address: address
+            })
+        };
+
+        const fee = await estimateFee(this._client, creator, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee
+        }
+    }
+
+    public async msgRemoveAdmin(
+        creator: string,
+        address: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject, fee: StdFee }> {
+
+        const msgEncoded = {
+            typeUrl: msgRemoveAdmin.typeUrl,
+            value: MsgRemoveAdmin.fromPartial({
+                creator: creator,
+                address: address
             })
         };
 

@@ -7,7 +7,8 @@ import {
     QueryCollectionByDenomIdResponse,
     QueryGetNftResponse,
     QueryAllNftResponse,
-    QueryParamsResponse
+    QueryParamsResponse,
+    QueryListAdminsResponse
 } from '../proto-types/query';
 
 import { PageRequest } from 'cosmjs-types/cosmos/base/query/v1beta1/pagination';
@@ -44,5 +45,9 @@ export class MarketplaceQueryClient {
 
     public async getParams(): Promise<QueryParamsResponse> {
         return this.queryClient.marketplace.params();
+    }
+
+    public async getAdmins(): Promise<QueryListAdminsResponse> {
+        return this.queryClient.marketplace.admins();
     }
 }

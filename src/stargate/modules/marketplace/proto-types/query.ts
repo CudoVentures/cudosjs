@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { PageRequest, PageResponse } from "cosmjs-types/cosmos/base/query/v1beta1/pagination";
+import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
 import { Collection } from "./collection";
 import { Nft } from "./nft";
 import { Params } from "./params";
@@ -57,6 +57,12 @@ export interface QueryCollectionByDenomIdRequest {
 
 export interface QueryCollectionByDenomIdResponse {
   Collection?: Collection;
+}
+
+export interface QueryListAdminsRequest {}
+
+export interface QueryListAdminsResponse {
+  Admins: string[];
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -684,6 +690,96 @@ export const QueryCollectionByDenomIdResponse = {
   },
 };
 
+function createBaseQueryListAdminsRequest(): QueryListAdminsRequest {
+  return {};
+}
+
+export const QueryListAdminsRequest = {
+  encode(_: QueryListAdminsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryListAdminsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryListAdminsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryListAdminsRequest {
+    return {};
+  },
+
+  toJSON(_: QueryListAdminsRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryListAdminsRequest>, I>>(_: I): QueryListAdminsRequest {
+    const message = createBaseQueryListAdminsRequest();
+    return message;
+  },
+};
+
+function createBaseQueryListAdminsResponse(): QueryListAdminsResponse {
+  return { Admins: [] };
+}
+
+export const QueryListAdminsResponse = {
+  encode(message: QueryListAdminsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.Admins) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryListAdminsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryListAdminsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Admins.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryListAdminsResponse {
+    return { Admins: Array.isArray(object?.Admins) ? object.Admins.map((e: any) => String(e)) : [] };
+  },
+
+  toJSON(message: QueryListAdminsResponse): unknown {
+    const obj: any = {};
+    if (message.Admins) {
+      obj.Admins = message.Admins.map((e) => e);
+    } else {
+      obj.Admins = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryListAdminsResponse>, I>>(object: I): QueryListAdminsResponse {
+    const message = createBaseQueryListAdminsResponse();
+    message.Admins = object.Admins?.map((e) => e) || [];
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -698,6 +794,8 @@ export interface Query {
   NftAll(request: QueryAllNftRequest): Promise<QueryAllNftResponse>;
   /** Queries a list of CollectionByDenomId items. */
   CollectionByDenomId(request: QueryCollectionByDenomIdRequest): Promise<QueryCollectionByDenomIdResponse>;
+  /** Queries a list of ListAdmins items. */
+  ListAdmins(request: QueryListAdminsRequest): Promise<QueryListAdminsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -712,6 +810,7 @@ export class QueryClientImpl implements Query {
     this.Nft = this.Nft.bind(this);
     this.NftAll = this.NftAll.bind(this);
     this.CollectionByDenomId = this.CollectionByDenomId.bind(this);
+    this.ListAdmins = this.ListAdmins.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -747,6 +846,12 @@ export class QueryClientImpl implements Query {
     const data = QueryCollectionByDenomIdRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "CollectionByDenomId", data);
     return promise.then((data) => QueryCollectionByDenomIdResponse.decode(new _m0.Reader(data)));
+  }
+
+  ListAdmins(request: QueryListAdminsRequest): Promise<QueryListAdminsResponse> {
+    const data = QueryListAdminsRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "ListAdmins", data);
+    return promise.then((data) => QueryListAdminsResponse.decode(new _m0.Reader(data)));
   }
 }
 
