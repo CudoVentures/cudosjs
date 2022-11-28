@@ -32,7 +32,7 @@ export class KeplrWallet extends Ledger {
     }
 
     async connect(): Promise<void> {
-        if (!window.keplr) {
+        if (!this.isLedgerExtensionPresent()) {
             throw new Error('Failed to get balance!');
         }
 
@@ -191,4 +191,9 @@ export class KeplrWallet extends Ledger {
 
         this.addressChangeCallbacks.forEach((callback: (address: string) => void) => callback(this.accountAddress ?? ''));
     }
+
+    isLedgerExtensionPresent(): boolean {
+        return window.keplr?.enable.length > 0
+    }
+
 }
