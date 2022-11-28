@@ -115,6 +115,10 @@ export class CosmostationWallet extends Ledger {
     isConnected(): boolean {
         return this.connected === true;
     }
+    
+    isLedgerExtensionPresent(): boolean {
+        return window.cosmostation ? true : false;
+    }
 
     private accountChangeEventListener = async (): Promise<void> => {
         if (this.offlineSigner !== null && this.offlineSigner !== undefined) {
@@ -123,4 +127,6 @@ export class CosmostationWallet extends Ledger {
 
         this.addressChangeCallbacks.forEach((callback: (address: string) => void) => callback(this.accountAddress ?? ''));
     }
+
+
 }

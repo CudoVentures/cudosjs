@@ -15,6 +15,7 @@ export default abstract class Ledger {
     abstract disconnect(): Promise<void>;
     abstract getBalance(): Promise<BigNumber>;
     abstract isConnected(): boolean;
+    abstract isLedgerExtensionPresent(): boolean;
 
     constructor() {
     }
