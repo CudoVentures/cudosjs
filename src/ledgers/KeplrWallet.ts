@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 
-import Ledger from './Ledger';
+import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
 
 declare let fetch: (url: string) => Promise<any>;
