@@ -3,6 +3,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Temporary testing data
+tests/**/test-data/
+tests/**/cudos-data/
+
 # Dependency directories
 node_modules/
 
