@@ -1,3 +1,5 @@
+#!/bin/bash
+
 CHAIN_ID='cudos-local-network'
 FEE_FLAGS='--gas auto --gas-adjustment 1.3 --gas-prices 5000000000000acudos'
 
