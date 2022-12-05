@@ -1,14 +1,11 @@
-import { DirectSecp256k1HdWallet, SigningStargateClient, StargateClient, GasPrice, AccountData } from '../src/index';
+import { SigningStargateClient, StargateClient, GasPrice } from '../src/index';
+import { getAccountInfo } from './test-setup';
 
 describe('addressbook', () => {
-
   const mnemonic1 = 'ordinary witness such toddler tag mouse helmet perfect venue eyebrow upgrade rabbit'
 
   const gasPrice = GasPrice.fromString('5000000000000acudos');
 
-  const rpc = 'http://localhost:26657';
-  let wallet: DirectSecp256k1HdWallet;
-  let account: AccountData;
   let address: string;
   let signingClient: SigningStargateClient;
   let queryClient: StargateClient;
@@ -16,11 +13,10 @@ describe('addressbook', () => {
   jest.setTimeout(40000);
 
   beforeAll(async () => {
-    wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic1);
-    account = (await wallet.getAccounts())[0];
-    address = account.address;
-    signingClient = await SigningStargateClient.connectWithSigner(rpc, wallet);
-    queryClient = await StargateClient.connect(rpc);
+    const accounInfo = await getAccountInfo(mnemonic1);
+    address = accounInfo.address;
+    signingClient = accounInfo.signingClient;
+    queryClient = accounInfo.queryClient;
   })
 
   // positive test case

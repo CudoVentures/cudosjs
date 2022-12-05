@@ -1,4 +1,5 @@
-import { DirectSecp256k1HdWallet, SigningStargateClient, StargateClient, GasPrice, AccountData } from '../src/index';
+import { SigningStargateClient, StargateClient, GasPrice } from '../src/index';
+import { getAccountInfo, getAdditionalAccountInfo } from './test-setup';
 import Long from "long";
 
 describe("Gravity module", () => {
@@ -7,29 +8,24 @@ describe("Gravity module", () => {
 
     const gasPrice = GasPrice.fromString('6000000000000acudos')
 
-    const rpc = "http://localhost:26657"
-    let mainWallet: DirectSecp256k1HdWallet;
-    let mainAccount: AccountData;
     let mainAddress: string;
     let queryClient: StargateClient;
     let signingClient: SigningStargateClient;
 
-    let aliceAccount: AccountData;
-    let aliceWallet: DirectSecp256k1HdWallet;
-    let aliceSigningClient: SigningStargateClient
+    let aliceAddress: string;
+    let aliceSigningClient: SigningStargateClient;
 
     jest.setTimeout(500000);
 
     beforeAll(async () => {
-        mainWallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic2)
-        mainAccount = (await mainWallet.getAccounts())[0];
-        mainAddress = mainAccount.address;
-        queryClient = await StargateClient.connect(rpc)
-        signingClient = await SigningStargateClient.connectWithSigner(rpc, mainWallet)
+        const accounInfo = await getAccountInfo(mnemonic2);
+        mainAddress = accounInfo.address;
+        signingClient = accounInfo.signingClient;
+        queryClient = accounInfo.queryClient;
 
-        aliceWallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic3)
-        aliceAccount = (await aliceWallet.getAccounts())[0];
-        aliceSigningClient = await SigningStargateClient.connectWithSigner(rpc, aliceWallet)
+        const additionalAccounInfo = await getAdditionalAccountInfo(mnemonic3);
+        aliceAddress = additionalAccounInfo.address;
+        aliceSigningClient = additionalAccounInfo.signingClient;
     })
 
     test("send  Cosmos --> ETH - happy path ", async () => {
@@ -110,8 +106,8 @@ describe("Gravity module", () => {
             .toBeGreaterThan(0)
         let id = (await queryClient.gravityModule.getPendingSendToEth(mainAddress)).unbatchedTransfers[0].id
         const notSenderSigningClient = aliceSigningClient
-        await expect(notSenderSigningClient.gravityCancelSendToEth(id, aliceAccount.address, gasPrice))
-            .rejects.toThrowError(`Sender ${aliceAccount.address} did not send Id ${id}`)
+        await expect(notSenderSigningClient.gravityCancelSendToEth(id, aliceAddress, gasPrice))
+            .rejects.toThrowError(`Sender ${aliceAddress} did not send Id ${id}`)
     })
 
     test("Cancel send to ETH - fail - wrong Id", async () => {

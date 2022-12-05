@@ -1,5 +1,6 @@
-import { DirectSecp256k1HdWallet, SigningStargateClient, StargateClient, GasPrice, AccountData } from '../src/index';
+import { SigningStargateClient, StargateClient, GasPrice } from '../src/index';
 import { NftInfo } from '../src/stargate/modules/nft/module';
+import { getAccountInfo, getAdditionalAccountInfo } from './test-setup';
 
 describe('nft', () => {
   const mnemonic6 = 'write senior detail business try dirt sort rural donate way acid flame'
@@ -28,25 +29,23 @@ describe('nft', () => {
     data: 'testData',
   }
 
-  const rpc = 'http://localhost:26657'
-  let mainWallet: DirectSecp256k1HdWallet;
-  let mainAccount: AccountData;
   let mainAddress: string;
   let mainSigningClient: SigningStargateClient;
   let queryClient: StargateClient;
-  let alice: AccountData;
+  let aliceAddress: string;
   let newTokenId = 0;
 
   jest.setTimeout(20000);
 
   beforeAll(async () => {
-    mainWallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic6);
-    mainAccount = (await mainWallet.getAccounts())[0];
-    mainAddress = mainAccount.address;
-    mainSigningClient = await SigningStargateClient.connectWithSigner(rpc, mainWallet);
-    queryClient = await StargateClient.connect(rpc);
+    const accounInfo = await getAccountInfo(mnemonic6);
+    mainAddress = accounInfo.address;
+    mainSigningClient = accounInfo.signingClient;
+    queryClient = accounInfo.queryClient;
 
-    alice = (await (await DirectSecp256k1HdWallet.fromMnemonic(mnemonic7)).getAccounts())[0];
+    const additionalAccounInfo = await getAdditionalAccountInfo(mnemonic7);
+    aliceAddress = additionalAccounInfo.address;
+
     correctDenom.creator = mainAddress;
     correctToken.owner = mainAddress;
   })
@@ -97,7 +96,7 @@ describe('nft', () => {
 
   test('mint token - fails invalid sender address', async () => {
     return expect(mainSigningClient.nftMintToken('invalidAddress', correctDenom.id, correctToken.name, correctToken.uri,
-      correctToken.data, alice.address, gasPrice))
+      correctToken.data, aliceAddress, gasPrice))
       .rejects.toThrow(`Invalid address`);
   })
 
@@ -127,10 +126,10 @@ describe('nft', () => {
 
   test('transfer token - happy path', async () => {
     await expect(mainSigningClient.nftTransfer(mainAddress, correctDenom.id, correctToken.id, mainAddress,
-      alice.address, gasPrice))
+      aliceAddress, gasPrice))
       .resolves.not.toThrowError();
     const editedToken = await queryClient.nftModule.getNftToken(correctDenom.id, correctToken.id);
-    return expect(editedToken.nft?.owner).toEqual(alice.address);
+    return expect(editedToken.nft?.owner).toEqual(aliceAddress);
   })
 
   test('edit token - fails not owner', async () => {
@@ -141,7 +140,7 @@ describe('nft', () => {
 
   test('transfer token - fails not owner', async () => {
     return expect(mainSigningClient.nftTransfer(mainAddress, correctDenom.id, correctToken.id, mainAddress,
-      alice.address, gasPrice))
+      aliceAddress, gasPrice))
       .rejects.toThrow(`failed to execute message`);
   })
 
@@ -151,40 +150,40 @@ describe('nft', () => {
       .resolves.not.toThrowError();
 
     newTokenId++;
-    await expect(mainSigningClient.nftApprove(mainAddress, correctDenom.id, `${newTokenId}`, alice.address, gasPrice))
+    await expect(mainSigningClient.nftApprove(mainAddress, correctDenom.id, `${newTokenId}`, aliceAddress, gasPrice))
       .resolves.not.toThrowError();
 
     const nft = await queryClient.nftModule.getNftToken(correctDenom.id, `${newTokenId}`);
 
-    return expect(nft?.nft?.approvedAddresses).toContain(alice.address);
+    return expect(nft?.nft?.approvedAddresses).toContain(aliceAddress);
   })
 
   test('revoke token - happy path', async () => {
-    await expect(mainSigningClient.nftRevokeToken(mainAddress, correctDenom.id, `${newTokenId}`, alice.address,
+    await expect(mainSigningClient.nftRevokeToken(mainAddress, correctDenom.id, `${newTokenId}`, aliceAddress,
       gasPrice))
       .resolves.not.toThrowError();
     const nft = await queryClient.nftModule.getNftToken(correctDenom.id, `${newTokenId}`);
 
-    return expect(nft?.nft?.approvedAddresses).not.toContain(alice.address);
+    return expect(nft?.nft?.approvedAddresses).not.toContain(aliceAddress);
   })
 
   test('revoke token - fails not approved address', async () => {
-    return expect(mainSigningClient.nftRevokeToken(mainAddress, correctDenom.id, `${newTokenId}`, alice.address,
+    return expect(mainSigningClient.nftRevokeToken(mainAddress, correctDenom.id, `${newTokenId}`, aliceAddress,
       gasPrice))
       .rejects.toThrowError('Query failed with (18): failed to execute message; message index: 0: No approved address');
   })
 
   test('approve all true - happy path', async () => {
-    await expect(mainSigningClient.nftApproveAll(mainAddress, alice.address, true, gasPrice))
+    await expect(mainSigningClient.nftApproveAll(mainAddress, aliceAddress, true, gasPrice))
       .resolves.not.toThrowError();
-    return expect(queryClient.nftModule.nftIsApprovedForAll(mainAddress, alice.address))
+    return expect(queryClient.nftModule.nftIsApprovedForAll(mainAddress, aliceAddress))
       .resolves.toEqual({ isApproved: true });
   })
 
   test('approve all false - happy path', async () => {
-    await expect(mainSigningClient.nftApproveAll(mainAddress, alice.address, false, gasPrice))
+    await expect(mainSigningClient.nftApproveAll(mainAddress, aliceAddress, false, gasPrice))
       .resolves.not.toThrowError();
-    return expect(queryClient.nftModule.nftIsApprovedForAll(mainAddress, alice.address))
+    return expect(queryClient.nftModule.nftIsApprovedForAll(mainAddress, aliceAddress))
       .resolves.toEqual({ isApproved: false });
   })
 
