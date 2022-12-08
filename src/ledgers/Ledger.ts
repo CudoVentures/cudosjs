@@ -3,7 +3,7 @@ import { OfflineSigner } from '../proto-signing';
 
 type AddressChangeCallback = (address: string) => void;
 
-export default abstract class Ledger {
+export abstract class Ledger {
 
     connected: boolean = false;
     accountAddress: string | null = null;

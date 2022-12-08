@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { cosmos, Cosmos, InstallError } from '@cosmostation/extension-client'
 import { getOfflineSigner } from "@cosmostation/cosmos-client";
 
-import Ledger from './Ledger';
+import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
 
 declare let fetch: (url: string) => Promise<any>;

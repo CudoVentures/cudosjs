@@ -1,6 +1,6 @@
 {
   "name": "cudosjs",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": "",
   "description": "JavaScript SDK for Cudos Network",
   "license": "ISC",
@@ -34,6 +34,7 @@
     "@cosmjs/tendermint-rpc": "^0.28.4",
     "bignumber.js": "^9.0.2",
     "yarn": "^1.22.19",
+    "tslib": "^2.4.1",
     "@cosmostation/extension-client": "^0.1.9",
     "@cosmostation/cosmos-client": "^0.0.4"
   },

@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 
-import Ledger from './Ledger';
+import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
 
 declare let fetch: (url: string) => Promise<any>;
@@ -108,7 +108,7 @@ export class KeplrWallet extends Ledger {
                     // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
                     // coinGeckoId: Meteor.settings.public.coingeckoId,
                 }],
-                features: ["ibc-transfer", "ibc-go", "cosmwasm"],
+                features: ["ibc-transfer", "ibc-go", "cosmwasm", "wasmd_0.24+"],
                 // (Optional) The number of the coin type.
                 // This field is only used to fetch the address from ENS.
                 // Ideally, it is recommended to be the same with BIP44 path's coin type.
