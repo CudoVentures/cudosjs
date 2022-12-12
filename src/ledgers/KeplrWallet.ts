@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 
 import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
+import { isExtensionEnabled, SUPPORTED_WALLET } from '.';
 
 declare let fetch: (url: string) => Promise<any>;
 
@@ -139,7 +140,6 @@ export class KeplrWallet extends Ledger {
             this.offlineSigner = offlineSigner;
             this.accountAddress = (await offlineSigner.getAccounts())[0].address;
             this.connected = true;
-            // this.network = await offlineSigner.get
 
             window.addEventListener("keplr_keystorechange", this.accountChangeEventListener);
 
@@ -160,7 +160,7 @@ export class KeplrWallet extends Ledger {
         try {
             const offlineSigner = window.getOfflineSigner(this.keplrWalletConfig.CHAIN_ID);
             const account = (await offlineSigner.getAccounts())[0];
-    
+
             const url = `${this.keplrWalletConfig.API}/cosmos/bank/v1beta1/balances/${account.address}/by_denom?denom=${CudosNetworkConsts.CURRENCY_DENOM}`;
             const amount = (await (await fetch(url)).json()).balance.amount;
 
@@ -193,7 +193,7 @@ export class KeplrWallet extends Ledger {
     }
 
     isLedgerExtensionPresent(): boolean {
-        return window.keplr?.enable.length > 0
+        return isExtensionEnabled(SUPPORTED_WALLET.Keplr)
     }
 
 }
