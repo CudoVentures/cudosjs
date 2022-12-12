@@ -5,6 +5,7 @@ import { getOfflineSigner } from "@cosmostation/cosmos-client";
 import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
 import { isExtensionEnabled, SUPPORTED_WALLET } from '.';
+import { StdSignature } from '../amino';
 
 declare let fetch: (url: string) => Promise<any>;
 
@@ -135,4 +136,10 @@ export class CosmostationWallet extends Ledger {
         this.addressChangeCallbacks.forEach((callback: (address: string) => void) => callback(this.accountAddress ?? ''));
     }
 
+
+    async signArbitrary(chainId: string, address: string, data: any): Promise<StdSignature> {
+        const stdSignature = await window.cosmostation.keplr!.signArbitrary(chainId,address,data)
+
+        return stdSignature;
+    }
 }

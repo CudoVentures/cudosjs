@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { StdSignature } from '../amino';
 import { OfflineSigner } from '../proto-signing';
 
 type AddressChangeCallback = (address: string) => void;
@@ -16,6 +17,7 @@ export abstract class Ledger {
     abstract getBalance(): Promise<BigNumber>;
     abstract isConnected(): boolean;
     abstract isLedgerExtensionPresent(): boolean;
+    abstract signArbitrary(chainId: string, address: string, data: any): Promise<StdSignature>;
 
     constructor() {
     }
