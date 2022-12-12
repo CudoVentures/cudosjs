@@ -85,7 +85,7 @@ export const isSupportedBrowser = (browser: string) => {
     return SUPPORTED_BROWSER[browser.toLowerCase() as SUPPORTED_BROWSER] ? true : false
 }
 
-export const verifyArbitrarySignature = (signedTx: StdSignature, address: string, data: any): boolean => {
+export const verifyArbitrarySignature = (signedTx: StdSignature, address: string, data: string | Uint8Array): boolean => {
     const { pubkey: decodedPubKey, signature: decodedSignature } = decodeSignature(signedTx)
 
     const verified = verifyADR36Amino(

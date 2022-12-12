@@ -17,7 +17,7 @@ export abstract class Ledger {
     abstract getBalance(): Promise<BigNumber>;
     abstract isConnected(): boolean;
     abstract isLedgerExtensionPresent(): boolean;
-    abstract signArbitrary(chainId: string, address: string, data: any): Promise<StdSignature>;
+    abstract signArbitrary(chainId: string, address: string, data: string | Uint8Array): Promise<StdSignature>;
 
     constructor() {
     }

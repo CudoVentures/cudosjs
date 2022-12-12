@@ -197,8 +197,8 @@ export class KeplrWallet extends Ledger {
         return isExtensionEnabled(SUPPORTED_WALLET.Keplr)
     }
 
-    async signArbitrary(chainId: string, address: string, data: any): Promise<StdSignature> {
-        const stdSignature = await window.keplr!.signArbitrary(chainId,address,data)
+    async signArbitrary(chainId: string, address: string, data: string | Uint8Array): Promise<StdSignature> {
+        const stdSignature = await window.keplr!.signArbitrary(chainId, address, data)
 
         return stdSignature;
     }

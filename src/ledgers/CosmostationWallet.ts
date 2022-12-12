@@ -137,8 +137,8 @@ export class CosmostationWallet extends Ledger {
     }
 
 
-    async signArbitrary(chainId: string, address: string, data: any): Promise<StdSignature> {
-        const stdSignature = await window.cosmostation.keplr!.signArbitrary(chainId,address,data)
+    async signArbitrary(chainId: string, address: string, data: string | Uint8Array): Promise<StdSignature> {
+        const stdSignature = await window.cosmostation.keplr!.signArbitrary(chainId, address, data)
 
         return stdSignature;
     }
