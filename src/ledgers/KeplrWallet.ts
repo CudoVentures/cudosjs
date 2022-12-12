@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
 import { isExtensionEnabled, SUPPORTED_WALLET } from '.';
+import { StdSignature } from '../amino';
 
 declare let fetch: (url: string) => Promise<any>;
 
@@ -194,6 +195,12 @@ export class KeplrWallet extends Ledger {
 
     isLedgerExtensionPresent(): boolean {
         return isExtensionEnabled(SUPPORTED_WALLET.Keplr)
+    }
+
+    async signArbitrary(chainId: string, address: string, data: string | Uint8Array): Promise<StdSignature> {
+        const stdSignature = await window.keplr!.signArbitrary(chainId, address, data)
+
+        return stdSignature;
     }
 
 }

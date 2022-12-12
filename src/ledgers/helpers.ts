@@ -1,4 +1,7 @@
-import { detect as detectBrowser } from 'detect-browser'
+import { CudosNetworkConsts } from '../utils';
+import { detect as detectBrowser } from 'detect-browser';
+import { decodeSignature, StdSignature } from '../amino';
+import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 
 declare let window: {
     keplr: any;
@@ -80,4 +83,18 @@ export const getSupportedBrowsersForWallet = (walletName: SUPPORTED_WALLET): SUP
 
 export const isSupportedBrowser = (browser: string) => {
     return SUPPORTED_BROWSER[browser.toLowerCase() as SUPPORTED_BROWSER] ? true : false
+}
+
+export const verifyArbitrarySignature = (signedTx: StdSignature, address: string, data: string | Uint8Array): boolean => {
+    const { pubkey: decodedPubKey, signature: decodedSignature } = decodeSignature(signedTx)
+
+    const verified = verifyADR36Amino(
+        CudosNetworkConsts.BECH32_PREFIX_ACC_ADDR,
+        address,
+        data,
+        decodedPubKey,
+        decodedSignature,
+    )
+
+    return verified
 }
