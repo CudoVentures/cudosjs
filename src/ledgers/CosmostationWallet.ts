@@ -4,6 +4,7 @@ import { getOfflineSigner } from "@cosmostation/cosmos-client";
 
 import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
+import { isExtensionEnabled, SUPPORTED_WALLET } from '.';
 
 declare let fetch: (url: string) => Promise<any>;
 
@@ -60,7 +61,7 @@ export class CosmostationWallet extends Ledger {
 
                     gasRate: {
                         average: `${Number(this.cosmostationWalletConfig.GAS_PRICE) * 4}`,
-                        low: `${Number(this.cosmostationWalletConfig.GAS_PRICE)* 2}`,
+                        low: `${Number(this.cosmostationWalletConfig.GAS_PRICE) * 2}`,
                         tiny: `${Number(this.cosmostationWalletConfig.GAS_PRICE)}`,
                     }
                 })
@@ -69,7 +70,7 @@ export class CosmostationWallet extends Ledger {
 
             this.accountAddress = account.address;
             this.connected = true;
-            
+
             this.offlineSigner = await getOfflineSigner(this.cosmostationWalletConfig.CHAIN_ID);;
             this.cosmostationEvent = this.provider.onAccountChanged(this.accountChangeEventListener);
         } catch (e: any) {
@@ -107,7 +108,7 @@ export class CosmostationWallet extends Ledger {
         try {
             const account = await this.provider?.requestAccount(this.cosmostationWalletConfig.CHAIN_NAME);
 
-            if(!account) {
+            if (!account) {
                 throw new Error('Failed to request account');
             }
 
@@ -121,9 +122,9 @@ export class CosmostationWallet extends Ledger {
     isConnected(): boolean {
         return this.connected === true;
     }
-    
+
     isLedgerExtensionPresent(): boolean {
-        return window.cosmostation ? true : false;
+        return isExtensionEnabled(SUPPORTED_WALLET.Cosmostation)
     }
 
     private accountChangeEventListener = async (): Promise<void> => {
@@ -133,6 +134,5 @@ export class CosmostationWallet extends Ledger {
 
         this.addressChangeCallbacks.forEach((callback: (address: string) => void) => callback(this.accountAddress ?? ''));
     }
-
 
 }
