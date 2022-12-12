@@ -1,40 +1,33 @@
-
-import { DirectSecp256k1HdWallet, SigningStargateClient, StargateClient, GasPrice, AccountData, PageRequest } from '../src/index';
-
+import { SigningStargateClient, StargateClient, GasPrice } from '../src/index';
+import { getAccountInfo } from './test-setup';
 
 describe('addressbook', () => {
-
-  const mnemonic1 = 'rebel wet poet torch carpet gaze axis ribbon approve depend inflict menu'
-  const mnemonic2 = 'noise memory wonder bottom kiwi device ranch scrub gasp also illegal grunt'
+  const mnemonic1 = 'ordinary witness such toddler tag mouse helmet perfect venue eyebrow upgrade rabbit'
 
   const gasPrice = GasPrice.fromString('5000000000000acudos');
 
-  const rpc = 'http://0.0.0.0:26657/';
-  let faucetWallet: DirectSecp256k1HdWallet;
-  let faucetAccount: AccountData;
-  let faucetAddress: string;
-  let faucet: SigningStargateClient;
+  let address: string;
+  let signingClient: SigningStargateClient;
   let queryClient: StargateClient;
 
-
   jest.setTimeout(40000);
-  // deploying alpha contract once before test cases
+
   beforeAll(async () => {
-    faucetWallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic1);
-    faucetAccount = (await faucetWallet.getAccounts())[0];
-    faucetAddress = faucetAccount.address;
-    faucet = await SigningStargateClient.connectWithSigner(rpc, faucetWallet);
-    queryClient = await StargateClient.connect(rpc);
+    const accounInfo = await getAccountInfo(mnemonic1);
+    address = accounInfo.address;
+    signingClient = accounInfo.signingClient;
+    queryClient = accounInfo.queryClient;
   })
 
   // positive test case
   test('general flow', async () => {
     const network = 'BTC', label = '1@denom';
-    await faucet.addressbookCreateAddress(faucetAddress, network, label, 'addr1', gasPrice);
-    await faucet.addressbookUpdateAddress(faucetAddress, network, label, 'addr2', gasPrice);
-    const value = await queryClient.addressbookModule.getAddress(faucetAddress, network, label);
-    expect(value.address.value).toEqual('addr2');
-    await faucet.addressbookDeleteAddress(faucetAddress, network, label, gasPrice);
-     await queryClient.addressbookModule.getAllAddresses();
+    await signingClient.addressbookCreateAddress(address, network, label, 'addr1', gasPrice);
+    await signingClient.addressbookUpdateAddress(address, network, label, 'addr2', gasPrice);
+    const value = await queryClient.addressbookModule.getAddress(address, network, label);
+    expect(value.address).toBeDefined();
+    expect(value.address!.value).toEqual('addr2');
+    await signingClient.addressbookDeleteAddress(address, network, label, gasPrice);
+    await queryClient.addressbookModule.getAllAddresses();
   });
 })
