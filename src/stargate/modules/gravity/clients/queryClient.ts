@@ -2,7 +2,7 @@ import { QueryClient, StargateClient, StargateClientOptions } from "@cosmjs/star
 import { HttpEndpoint, Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { GravityExtension, setupGravityExtension } from "../queries";
 import { checkValidAddress, checkValidValidatorAddress, checkValidNftDenomId, checkValidETHAddress } from "../../../../utils/checks";
-import { CudosNetworkConsts } from "src/utils";
+import { CudosNetworkConsts } from "utils";
 
 import{
     QueryClientImpl,
