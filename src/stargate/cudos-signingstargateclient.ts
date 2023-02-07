@@ -31,6 +31,8 @@ import { Int53 } from "../math";
 import { MarketplaceModule } from "./modules/marketplace/module";
 import { AddressbookModule } from "./modules/addressbook/module";
 import { Royalty } from "./modules/marketplace/proto-types/royalty";
+import { Duration } from "cosmjs-types/google/protobuf/duration";
+import { DutchAuctionRequest, EnglishAuctionRequest } from "./modules/marketplace/auctions";
 
 export class CudosSigningStargateClient extends SigningStargateClient {
   private readonly directSigner: OfflineDirectSigner | undefined;
@@ -729,5 +731,64 @@ export class CudosSigningStargateClient extends SigningStargateClient {
       memo
     );
     return this.signAndBroadcast(creator, [msg], fee, memo);
+  }
+
+  public async marketplacePublishAuction(
+    creator: string,
+    tokenId: string,
+    denomId: string,
+    duration: Duration,
+    auction: EnglishAuctionRequest | DutchAuctionRequest,
+    gasPrice: GasPrice,
+    gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+    memo = ""
+  ): Promise<DeliverTxResponse> {
+    const { msg, fee } = await this.marketplaceModule.msgPublishAuction(
+      creator,
+      tokenId,
+      denomId,
+      duration,
+      auction,
+      gasPrice,
+      gasMultiplier,
+      memo
+    );
+    return this.signAndBroadcast(creator, [msg], fee, memo);
+  }
+
+  public async marketplacePlaceBid(
+    bidder: string,
+    auctionId: string,
+    amount: Coin,
+    gasPrice: GasPrice,
+    gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+    memo = ""
+  ): Promise<DeliverTxResponse> {
+    const { msg, fee } = await this.marketplaceModule.msgPlaceBid(
+      bidder,
+      auctionId,
+      amount,
+      gasPrice,
+      gasMultiplier,
+      memo
+    );
+    return this.signAndBroadcast(bidder, [msg], fee, memo);
+  }
+
+  public async marketplaceAcceptBid(
+    sender: string,
+    auctionId: string,
+    gasPrice: GasPrice,
+    gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+    memo = ""
+  ): Promise<DeliverTxResponse> {
+    const { msg, fee } = await this.marketplaceModule.msgAcceptBid(
+      sender,
+      auctionId,
+      gasPrice,
+      gasMultiplier,
+      memo
+    );
+    return this.signAndBroadcast(sender, [msg], fee, memo);
   }
 }

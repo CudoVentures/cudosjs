@@ -8,6 +8,9 @@ describe('marketplace', () => {
   const mnemonic5 = 'tape soul absorb cabin luxury practice rally clerk love kiss throw avoid'
 
   const gasPrice = GasPrice.fromString('6000000000000acudos');
+  const duration = { seconds: Long.fromInt(1111111), nanos: 5 };
+  const minPrice = coin('1', 'acudos');
+  const startPrice = coin('1000', 'acudos');
 
   let mainAddress: string;
   let mainSigningClient: SigningStargateClient;
@@ -52,5 +55,15 @@ describe('marketplace', () => {
 
     // The marketplace NFT id starts from 0
     await alice.marketplaceBuyNft(aliceAddress, Long.fromNumber(0), gasPrice);
+
+    await alice.marketplacePublishAuction(aliceAddress, '1', denomId, duration, { startPrice, minPrice }, gasPrice);
+
+    await mainSigningClient.marketplacePlaceBid(mainAddress, '1', startPrice, gasPrice);
+
+    await mainSigningClient.marketplacePublishAuction(mainAddress, '1', denomId, duration, { minPrice }, gasPrice);
+
+    await alice.marketplacePlaceBid(aliceAddress, '2', minPrice, gasPrice);
+
+    await mainSigningClient.marketplaceAcceptBid(mainAddress, '2', gasPrice);
   });
 })

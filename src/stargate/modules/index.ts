@@ -9,6 +9,7 @@ export * as nftQueryProto from './nft/proto-types/query'
 
 export * as marketplaceMsgProto from './marketplace/proto-types/tx'
 export * as marketplaceQueryProto from './marketplace/proto-types/query'
+export * as marketplaceAuctionProto from './marketplace/proto-types/auction'
 
 export * as addressbookMsgProto from './addressbook/proto-types/tx'
 export * as addressbookQueryProto from './addressbook/proto-types/query'

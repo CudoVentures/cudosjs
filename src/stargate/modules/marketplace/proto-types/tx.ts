@@ -2,6 +2,8 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
+import { Any } from "cosmjs-types/google/protobuf/any";
+import { Duration } from "cosmjs-types/google/protobuf/duration";
 import { Royalty } from "./royalty";
 
 export const protobufPackage = "cudoventures.cudosnode.marketplace";
@@ -13,7 +15,8 @@ export interface MsgPublishCollection {
   resaleRoyalties: Royalty[];
 }
 
-export interface MsgPublishCollectionResponse {}
+export interface MsgPublishCollectionResponse {
+}
 
 export interface MsgPublishNft {
   creator: string;
@@ -22,14 +25,16 @@ export interface MsgPublishNft {
   price?: Coin;
 }
 
-export interface MsgPublishNftResponse {}
+export interface MsgPublishNftResponse {
+}
 
 export interface MsgBuyNft {
   creator: string;
   id: Long;
 }
 
-export interface MsgBuyNftResponse {}
+export interface MsgBuyNftResponse {
+}
 
 export interface MsgMintNft {
   creator: string;
@@ -42,28 +47,32 @@ export interface MsgMintNft {
   uid: string;
 }
 
-export interface MsgMintNftResponse {}
+export interface MsgMintNftResponse {
+}
 
 export interface MsgRemoveNft {
   creator: string;
   id: Long;
 }
 
-export interface MsgRemoveNftResponse {}
+export interface MsgRemoveNftResponse {
+}
 
 export interface MsgVerifyCollection {
   creator: string;
   id: Long;
 }
 
-export interface MsgVerifyCollectionResponse {}
+export interface MsgVerifyCollectionResponse {
+}
 
 export interface MsgUnverifyCollection {
   creator: string;
   id: Long;
 }
 
-export interface MsgUnverifyCollectionResponse {}
+export interface MsgUnverifyCollectionResponse {
+}
 
 export interface MsgCreateCollection {
   creator: string;
@@ -80,7 +89,8 @@ export interface MsgCreateCollection {
   verified: boolean;
 }
 
-export interface MsgCreateCollectionResponse {}
+export interface MsgCreateCollectionResponse {
+}
 
 export interface MsgUpdateRoyalties {
   creator: string;
@@ -89,7 +99,8 @@ export interface MsgUpdateRoyalties {
   resaleRoyalties: Royalty[];
 }
 
-export interface MsgUpdateRoyaltiesResponse {}
+export interface MsgUpdateRoyaltiesResponse {
+}
 
 export interface MsgUpdatePrice {
   creator: string;
@@ -97,21 +108,52 @@ export interface MsgUpdatePrice {
   price?: Coin;
 }
 
-export interface MsgUpdatePriceResponse {}
+export interface MsgUpdatePriceResponse {
+}
 
 export interface MsgAddAdmin {
   creator: string;
   address: string;
 }
 
-export interface MsgAddAdminResponse {}
+export interface MsgAddAdminResponse {
+}
 
 export interface MsgRemoveAdmin {
   creator: string;
   address: string;
 }
 
-export interface MsgRemoveAdminResponse {}
+export interface MsgRemoveAdminResponse {
+}
+
+export interface MsgPublishAuction {
+  denomId: string;
+  tokenId: string;
+  duration?: Duration;
+  auction?: Any;
+  creator: string;
+}
+
+export interface MsgPublishAuctionResponse {
+}
+
+export interface MsgPlaceBid {
+  auctionId: Long;
+  amount?: Coin;
+  bidder: string;
+}
+
+export interface MsgPlaceBidResponse {
+}
+
+export interface MsgAcceptBid {
+  auctionId: Long;
+  sender: string;
+}
+
+export interface MsgAcceptBidResponse {
+}
 
 function createBaseMsgPublishCollection(): MsgPublishCollection {
   return { creator: "", denomId: "", mintRoyalties: [], resaleRoyalties: [] };
@@ -179,16 +221,20 @@ export const MsgPublishCollection = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.denomId !== undefined && (obj.denomId = message.denomId);
     if (message.mintRoyalties) {
-      obj.mintRoyalties = message.mintRoyalties.map((e) => (e ? Royalty.toJSON(e) : undefined));
+      obj.mintRoyalties = message.mintRoyalties.map((e) => e ? Royalty.toJSON(e) : undefined);
     } else {
       obj.mintRoyalties = [];
     }
     if (message.resaleRoyalties) {
-      obj.resaleRoyalties = message.resaleRoyalties.map((e) => (e ? Royalty.toJSON(e) : undefined));
+      obj.resaleRoyalties = message.resaleRoyalties.map((e) => e ? Royalty.toJSON(e) : undefined);
     } else {
       obj.resaleRoyalties = [];
     }
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPublishCollection>, I>>(base?: I): MsgPublishCollection {
+    return MsgPublishCollection.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgPublishCollection>, I>>(object: I): MsgPublishCollection {
@@ -234,9 +280,11 @@ export const MsgPublishCollectionResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgPublishCollectionResponse>, I>>(
-    _: I,
-  ): MsgPublishCollectionResponse {
+  create<I extends Exact<DeepPartial<MsgPublishCollectionResponse>, I>>(base?: I): MsgPublishCollectionResponse {
+    return MsgPublishCollectionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgPublishCollectionResponse>, I>>(_: I): MsgPublishCollectionResponse {
     const message = createBaseMsgPublishCollectionResponse();
     return message;
   },
@@ -308,13 +356,16 @@ export const MsgPublishNft = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgPublishNft>, I>>(base?: I): MsgPublishNft {
+    return MsgPublishNft.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgPublishNft>, I>>(object: I): MsgPublishNft {
     const message = createBaseMsgPublishNft();
     message.creator = object.creator ?? "";
     message.tokenId = object.tokenId ?? "";
     message.denomId = object.denomId ?? "";
-    message.price =
-      object.price !== undefined && object.price !== null ? Coin.fromPartial(object.price) : undefined;
+    message.price = (object.price !== undefined && object.price !== null) ? Coin.fromPartial(object.price) : undefined;
     return message;
   },
 };
@@ -350,6 +401,10 @@ export const MsgPublishNftResponse = {
   toJSON(_: MsgPublishNftResponse): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPublishNftResponse>, I>>(base?: I): MsgPublishNftResponse {
+    return MsgPublishNftResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgPublishNftResponse>, I>>(_: I): MsgPublishNftResponse {
@@ -408,10 +463,14 @@ export const MsgBuyNft = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgBuyNft>, I>>(base?: I): MsgBuyNft {
+    return MsgBuyNft.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgBuyNft>, I>>(object: I): MsgBuyNft {
     const message = createBaseMsgBuyNft();
     message.creator = object.creator ?? "";
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
     return message;
   },
 };
@@ -447,6 +506,10 @@ export const MsgBuyNftResponse = {
   toJSON(_: MsgBuyNftResponse): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgBuyNftResponse>, I>>(base?: I): MsgBuyNftResponse {
+    return MsgBuyNftResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgBuyNftResponse>, I>>(_: I): MsgBuyNftResponse {
@@ -553,13 +616,16 @@ export const MsgMintNft = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgMintNft>, I>>(base?: I): MsgMintNft {
+    return MsgMintNft.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgMintNft>, I>>(object: I): MsgMintNft {
     const message = createBaseMsgMintNft();
     message.creator = object.creator ?? "";
     message.denomId = object.denomId ?? "";
     message.recipient = object.recipient ?? "";
-    message.price =
-      object.price !== undefined && object.price !== null ? Coin.fromPartial(object.price) : undefined;
+    message.price = (object.price !== undefined && object.price !== null) ? Coin.fromPartial(object.price) : undefined;
     message.name = object.name ?? "";
     message.uri = object.uri ?? "";
     message.data = object.data ?? "";
@@ -599,6 +665,10 @@ export const MsgMintNftResponse = {
   toJSON(_: MsgMintNftResponse): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgMintNftResponse>, I>>(base?: I): MsgMintNftResponse {
+    return MsgMintNftResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgMintNftResponse>, I>>(_: I): MsgMintNftResponse {
@@ -657,10 +727,14 @@ export const MsgRemoveNft = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgRemoveNft>, I>>(base?: I): MsgRemoveNft {
+    return MsgRemoveNft.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgRemoveNft>, I>>(object: I): MsgRemoveNft {
     const message = createBaseMsgRemoveNft();
     message.creator = object.creator ?? "";
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
     return message;
   },
 };
@@ -696,6 +770,10 @@ export const MsgRemoveNftResponse = {
   toJSON(_: MsgRemoveNftResponse): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgRemoveNftResponse>, I>>(base?: I): MsgRemoveNftResponse {
+    return MsgRemoveNftResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgRemoveNftResponse>, I>>(_: I): MsgRemoveNftResponse {
@@ -754,10 +832,14 @@ export const MsgVerifyCollection = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgVerifyCollection>, I>>(base?: I): MsgVerifyCollection {
+    return MsgVerifyCollection.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgVerifyCollection>, I>>(object: I): MsgVerifyCollection {
     const message = createBaseMsgVerifyCollection();
     message.creator = object.creator ?? "";
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
     return message;
   },
 };
@@ -795,9 +877,11 @@ export const MsgVerifyCollectionResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgVerifyCollectionResponse>, I>>(
-    _: I,
-  ): MsgVerifyCollectionResponse {
+  create<I extends Exact<DeepPartial<MsgVerifyCollectionResponse>, I>>(base?: I): MsgVerifyCollectionResponse {
+    return MsgVerifyCollectionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgVerifyCollectionResponse>, I>>(_: I): MsgVerifyCollectionResponse {
     const message = createBaseMsgVerifyCollectionResponse();
     return message;
   },
@@ -853,10 +937,14 @@ export const MsgUnverifyCollection = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgUnverifyCollection>, I>>(base?: I): MsgUnverifyCollection {
+    return MsgUnverifyCollection.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgUnverifyCollection>, I>>(object: I): MsgUnverifyCollection {
     const message = createBaseMsgUnverifyCollection();
     message.creator = object.creator ?? "";
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
     return message;
   },
 };
@@ -894,9 +982,11 @@ export const MsgUnverifyCollectionResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgUnverifyCollectionResponse>, I>>(
-    _: I,
-  ): MsgUnverifyCollectionResponse {
+  create<I extends Exact<DeepPartial<MsgUnverifyCollectionResponse>, I>>(base?: I): MsgUnverifyCollectionResponse {
+    return MsgUnverifyCollectionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgUnverifyCollectionResponse>, I>>(_: I): MsgUnverifyCollectionResponse {
     const message = createBaseMsgUnverifyCollectionResponse();
     return message;
   },
@@ -1044,17 +1134,21 @@ export const MsgCreateCollection = {
     message.minter !== undefined && (obj.minter = message.minter);
     message.data !== undefined && (obj.data = message.data);
     if (message.mintRoyalties) {
-      obj.mintRoyalties = message.mintRoyalties.map((e) => (e ? Royalty.toJSON(e) : undefined));
+      obj.mintRoyalties = message.mintRoyalties.map((e) => e ? Royalty.toJSON(e) : undefined);
     } else {
       obj.mintRoyalties = [];
     }
     if (message.resaleRoyalties) {
-      obj.resaleRoyalties = message.resaleRoyalties.map((e) => (e ? Royalty.toJSON(e) : undefined));
+      obj.resaleRoyalties = message.resaleRoyalties.map((e) => e ? Royalty.toJSON(e) : undefined);
     } else {
       obj.resaleRoyalties = [];
     }
     message.verified !== undefined && (obj.verified = message.verified);
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgCreateCollection>, I>>(base?: I): MsgCreateCollection {
+    return MsgCreateCollection.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgCreateCollection>, I>>(object: I): MsgCreateCollection {
@@ -1108,9 +1202,11 @@ export const MsgCreateCollectionResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgCreateCollectionResponse>, I>>(
-    _: I,
-  ): MsgCreateCollectionResponse {
+  create<I extends Exact<DeepPartial<MsgCreateCollectionResponse>, I>>(base?: I): MsgCreateCollectionResponse {
+    return MsgCreateCollectionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgCreateCollectionResponse>, I>>(_: I): MsgCreateCollectionResponse {
     const message = createBaseMsgCreateCollectionResponse();
     return message;
   },
@@ -1182,22 +1278,26 @@ export const MsgUpdateRoyalties = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = (message.id || Long.UZERO).toString());
     if (message.mintRoyalties) {
-      obj.mintRoyalties = message.mintRoyalties.map((e) => (e ? Royalty.toJSON(e) : undefined));
+      obj.mintRoyalties = message.mintRoyalties.map((e) => e ? Royalty.toJSON(e) : undefined);
     } else {
       obj.mintRoyalties = [];
     }
     if (message.resaleRoyalties) {
-      obj.resaleRoyalties = message.resaleRoyalties.map((e) => (e ? Royalty.toJSON(e) : undefined));
+      obj.resaleRoyalties = message.resaleRoyalties.map((e) => e ? Royalty.toJSON(e) : undefined);
     } else {
       obj.resaleRoyalties = [];
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgUpdateRoyalties>, I>>(base?: I): MsgUpdateRoyalties {
+    return MsgUpdateRoyalties.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgUpdateRoyalties>, I>>(object: I): MsgUpdateRoyalties {
     const message = createBaseMsgUpdateRoyalties();
     message.creator = object.creator ?? "";
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
     message.mintRoyalties = object.mintRoyalties?.map((e) => Royalty.fromPartial(e)) || [];
     message.resaleRoyalties = object.resaleRoyalties?.map((e) => Royalty.fromPartial(e)) || [];
     return message;
@@ -1235,6 +1335,10 @@ export const MsgUpdateRoyaltiesResponse = {
   toJSON(_: MsgUpdateRoyaltiesResponse): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgUpdateRoyaltiesResponse>, I>>(base?: I): MsgUpdateRoyaltiesResponse {
+    return MsgUpdateRoyaltiesResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgUpdateRoyaltiesResponse>, I>>(_: I): MsgUpdateRoyaltiesResponse {
@@ -1301,12 +1405,15 @@ export const MsgUpdatePrice = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgUpdatePrice>, I>>(base?: I): MsgUpdatePrice {
+    return MsgUpdatePrice.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgUpdatePrice>, I>>(object: I): MsgUpdatePrice {
     const message = createBaseMsgUpdatePrice();
     message.creator = object.creator ?? "";
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
-    message.price =
-      object.price !== undefined && object.price !== null ? Coin.fromPartial(object.price) : undefined;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
+    message.price = (object.price !== undefined && object.price !== null) ? Coin.fromPartial(object.price) : undefined;
     return message;
   },
 };
@@ -1342,6 +1449,10 @@ export const MsgUpdatePriceResponse = {
   toJSON(_: MsgUpdatePriceResponse): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgUpdatePriceResponse>, I>>(base?: I): MsgUpdatePriceResponse {
+    return MsgUpdatePriceResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgUpdatePriceResponse>, I>>(_: I): MsgUpdatePriceResponse {
@@ -1400,6 +1511,10 @@ export const MsgAddAdmin = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgAddAdmin>, I>>(base?: I): MsgAddAdmin {
+    return MsgAddAdmin.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgAddAdmin>, I>>(object: I): MsgAddAdmin {
     const message = createBaseMsgAddAdmin();
     message.creator = object.creator ?? "";
@@ -1439,6 +1554,10 @@ export const MsgAddAdminResponse = {
   toJSON(_: MsgAddAdminResponse): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgAddAdminResponse>, I>>(base?: I): MsgAddAdminResponse {
+    return MsgAddAdminResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgAddAdminResponse>, I>>(_: I): MsgAddAdminResponse {
@@ -1497,6 +1616,10 @@ export const MsgRemoveAdmin = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgRemoveAdmin>, I>>(base?: I): MsgRemoveAdmin {
+    return MsgRemoveAdmin.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgRemoveAdmin>, I>>(object: I): MsgRemoveAdmin {
     const message = createBaseMsgRemoveAdmin();
     message.creator = object.creator ?? "";
@@ -1538,8 +1661,373 @@ export const MsgRemoveAdminResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<MsgRemoveAdminResponse>, I>>(base?: I): MsgRemoveAdminResponse {
+    return MsgRemoveAdminResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<MsgRemoveAdminResponse>, I>>(_: I): MsgRemoveAdminResponse {
     const message = createBaseMsgRemoveAdminResponse();
+    return message;
+  },
+};
+
+function createBaseMsgPublishAuction(): MsgPublishAuction {
+  return { denomId: "", tokenId: "", duration: undefined, auction: undefined, creator: "" };
+}
+
+export const MsgPublishAuction = {
+  encode(message: MsgPublishAuction, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.denomId !== "") {
+      writer.uint32(10).string(message.denomId);
+    }
+    if (message.tokenId !== "") {
+      writer.uint32(18).string(message.tokenId);
+    }
+    if (message.duration !== undefined) {
+      Duration.encode(message.duration, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.auction !== undefined) {
+      Any.encode(message.auction, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.creator !== "") {
+      writer.uint32(42).string(message.creator);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgPublishAuction {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgPublishAuction();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denomId = reader.string();
+          break;
+        case 2:
+          message.tokenId = reader.string();
+          break;
+        case 3:
+          message.duration = Duration.decode(reader, reader.uint32());
+          break;
+        case 4:
+          message.auction = Any.decode(reader, reader.uint32());
+          break;
+        case 5:
+          message.creator = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgPublishAuction {
+    return {
+      denomId: isSet(object.denomId) ? String(object.denomId) : "",
+      tokenId: isSet(object.tokenId) ? String(object.tokenId) : "",
+      duration: isSet(object.duration) ? Duration.fromJSON(object.duration) : undefined,
+      auction: isSet(object.auction) ? Any.fromJSON(object.auction) : undefined,
+      creator: isSet(object.creator) ? String(object.creator) : "",
+    };
+  },
+
+  toJSON(message: MsgPublishAuction): unknown {
+    const obj: any = {};
+    message.denomId !== undefined && (obj.denomId = message.denomId);
+    message.tokenId !== undefined && (obj.tokenId = message.tokenId);
+    message.duration !== undefined && (obj.duration = message.duration ? Duration.toJSON(message.duration) : undefined);
+    message.auction !== undefined && (obj.auction = message.auction ? Any.toJSON(message.auction) : undefined);
+    message.creator !== undefined && (obj.creator = message.creator);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPublishAuction>, I>>(base?: I): MsgPublishAuction {
+    return MsgPublishAuction.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgPublishAuction>, I>>(object: I): MsgPublishAuction {
+    const message = createBaseMsgPublishAuction();
+    message.denomId = object.denomId ?? "";
+    message.tokenId = object.tokenId ?? "";
+    message.duration = (object.duration !== undefined && object.duration !== null)
+      ? Duration.fromPartial(object.duration)
+      : undefined;
+    message.auction = (object.auction !== undefined && object.auction !== null)
+      ? Any.fromPartial(object.auction)
+      : undefined;
+    message.creator = object.creator ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgPublishAuctionResponse(): MsgPublishAuctionResponse {
+  return {};
+}
+
+export const MsgPublishAuctionResponse = {
+  encode(_: MsgPublishAuctionResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgPublishAuctionResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgPublishAuctionResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgPublishAuctionResponse {
+    return {};
+  },
+
+  toJSON(_: MsgPublishAuctionResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPublishAuctionResponse>, I>>(base?: I): MsgPublishAuctionResponse {
+    return MsgPublishAuctionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgPublishAuctionResponse>, I>>(_: I): MsgPublishAuctionResponse {
+    const message = createBaseMsgPublishAuctionResponse();
+    return message;
+  },
+};
+
+function createBaseMsgPlaceBid(): MsgPlaceBid {
+  return { auctionId: Long.UZERO, amount: undefined, bidder: "" };
+}
+
+export const MsgPlaceBid = {
+  encode(message: MsgPlaceBid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.auctionId.isZero()) {
+      writer.uint32(8).uint64(message.auctionId);
+    }
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.bidder !== "") {
+      writer.uint32(26).string(message.bidder);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgPlaceBid {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgPlaceBid();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.auctionId = reader.uint64() as Long;
+          break;
+        case 2:
+          message.amount = Coin.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.bidder = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgPlaceBid {
+    return {
+      auctionId: isSet(object.auctionId) ? Long.fromValue(object.auctionId) : Long.UZERO,
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
+      bidder: isSet(object.bidder) ? String(object.bidder) : "",
+    };
+  },
+
+  toJSON(message: MsgPlaceBid): unknown {
+    const obj: any = {};
+    message.auctionId !== undefined && (obj.auctionId = (message.auctionId || Long.UZERO).toString());
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.bidder !== undefined && (obj.bidder = message.bidder);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPlaceBid>, I>>(base?: I): MsgPlaceBid {
+    return MsgPlaceBid.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgPlaceBid>, I>>(object: I): MsgPlaceBid {
+    const message = createBaseMsgPlaceBid();
+    message.auctionId = (object.auctionId !== undefined && object.auctionId !== null)
+      ? Long.fromValue(object.auctionId)
+      : Long.UZERO;
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
+    message.bidder = object.bidder ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgPlaceBidResponse(): MsgPlaceBidResponse {
+  return {};
+}
+
+export const MsgPlaceBidResponse = {
+  encode(_: MsgPlaceBidResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgPlaceBidResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgPlaceBidResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgPlaceBidResponse {
+    return {};
+  },
+
+  toJSON(_: MsgPlaceBidResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPlaceBidResponse>, I>>(base?: I): MsgPlaceBidResponse {
+    return MsgPlaceBidResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgPlaceBidResponse>, I>>(_: I): MsgPlaceBidResponse {
+    const message = createBaseMsgPlaceBidResponse();
+    return message;
+  },
+};
+
+function createBaseMsgAcceptBid(): MsgAcceptBid {
+  return { auctionId: Long.UZERO, sender: "" };
+}
+
+export const MsgAcceptBid = {
+  encode(message: MsgAcceptBid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.auctionId.isZero()) {
+      writer.uint32(8).uint64(message.auctionId);
+    }
+    if (message.sender !== "") {
+      writer.uint32(18).string(message.sender);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAcceptBid {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAcceptBid();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.auctionId = reader.uint64() as Long;
+          break;
+        case 2:
+          message.sender = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAcceptBid {
+    return {
+      auctionId: isSet(object.auctionId) ? Long.fromValue(object.auctionId) : Long.UZERO,
+      sender: isSet(object.sender) ? String(object.sender) : "",
+    };
+  },
+
+  toJSON(message: MsgAcceptBid): unknown {
+    const obj: any = {};
+    message.auctionId !== undefined && (obj.auctionId = (message.auctionId || Long.UZERO).toString());
+    message.sender !== undefined && (obj.sender = message.sender);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgAcceptBid>, I>>(base?: I): MsgAcceptBid {
+    return MsgAcceptBid.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAcceptBid>, I>>(object: I): MsgAcceptBid {
+    const message = createBaseMsgAcceptBid();
+    message.auctionId = (object.auctionId !== undefined && object.auctionId !== null)
+      ? Long.fromValue(object.auctionId)
+      : Long.UZERO;
+    message.sender = object.sender ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgAcceptBidResponse(): MsgAcceptBidResponse {
+  return {};
+}
+
+export const MsgAcceptBidResponse = {
+  encode(_: MsgAcceptBidResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAcceptBidResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAcceptBidResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgAcceptBidResponse {
+    return {};
+  },
+
+  toJSON(_: MsgAcceptBidResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgAcceptBidResponse>, I>>(base?: I): MsgAcceptBidResponse {
+    return MsgAcceptBidResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAcceptBidResponse>, I>>(_: I): MsgAcceptBidResponse {
+    const message = createBaseMsgAcceptBidResponse();
     return message;
   },
 };
@@ -1557,8 +2045,11 @@ export interface Msg {
   UpdateRoyalties(request: MsgUpdateRoyalties): Promise<MsgUpdateRoyaltiesResponse>;
   UpdatePrice(request: MsgUpdatePrice): Promise<MsgUpdatePriceResponse>;
   AddAdmin(request: MsgAddAdmin): Promise<MsgAddAdminResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   RemoveAdmin(request: MsgRemoveAdmin): Promise<MsgRemoveAdminResponse>;
+  PublishAuction(request: MsgPublishAuction): Promise<MsgPublishAuctionResponse>;
+  PlaceBid(request: MsgPlaceBid): Promise<MsgPlaceBidResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  AcceptBid(request: MsgAcceptBid): Promise<MsgAcceptBidResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -1579,6 +2070,9 @@ export class MsgClientImpl implements Msg {
     this.UpdatePrice = this.UpdatePrice.bind(this);
     this.AddAdmin = this.AddAdmin.bind(this);
     this.RemoveAdmin = this.RemoveAdmin.bind(this);
+    this.PublishAuction = this.PublishAuction.bind(this);
+    this.PlaceBid = this.PlaceBid.bind(this);
+    this.AcceptBid = this.AcceptBid.bind(this);
   }
   PublishCollection(request: MsgPublishCollection): Promise<MsgPublishCollectionResponse> {
     const data = MsgPublishCollection.encode(request).finish();
@@ -1651,6 +2145,24 @@ export class MsgClientImpl implements Msg {
     const promise = this.rpc.request(this.service, "RemoveAdmin", data);
     return promise.then((data) => MsgRemoveAdminResponse.decode(new _m0.Reader(data)));
   }
+
+  PublishAuction(request: MsgPublishAuction): Promise<MsgPublishAuctionResponse> {
+    const data = MsgPublishAuction.encode(request).finish();
+    const promise = this.rpc.request(this.service, "PublishAuction", data);
+    return promise.then((data) => MsgPublishAuctionResponse.decode(new _m0.Reader(data)));
+  }
+
+  PlaceBid(request: MsgPlaceBid): Promise<MsgPlaceBidResponse> {
+    const data = MsgPlaceBid.encode(request).finish();
+    const promise = this.rpc.request(this.service, "PlaceBid", data);
+    return promise.then((data) => MsgPlaceBidResponse.decode(new _m0.Reader(data)));
+  }
+
+  AcceptBid(request: MsgAcceptBid): Promise<MsgAcceptBidResponse> {
+    const data = MsgAcceptBid.encode(request).finish();
+    const promise = this.rpc.request(this.service, "AcceptBid", data);
+    return promise.then((data) => MsgAcceptBidResponse.decode(new _m0.Reader(data)));
+  }
 }
 
 interface Rpc {
@@ -1659,21 +2171,14 @@ interface Rpc {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Long
-  ? string | number | Long
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Long ? string | number | Long : T extends Array<infer U> ? Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
+export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {

@@ -8,7 +8,9 @@ import {
     QueryGetNftResponse,
     QueryAllNftResponse,
     QueryParamsResponse,
-    QueryListAdminsResponse
+    QueryListAdminsResponse,
+    QueryAllAuctionResponse,
+    QueryGetAuctionResponse
 } from '../proto-types/query';
 
 import { PageRequest } from 'cosmjs-types/cosmos/base/query/v1beta1/pagination';
@@ -49,5 +51,13 @@ export class MarketplaceQueryClient {
 
     public async getAdmins(): Promise<QueryListAdminsResponse> {
         return this.queryClient.marketplace.admins();
+    }
+
+    public async getAuction(id: Long): Promise<QueryGetAuctionResponse> {
+        return this.queryClient.marketplace.auction(id);
+    }
+
+    public async getAllAuctions(pagination?: PageRequest): Promise<QueryAllAuctionResponse> {
+        return this.queryClient.marketplace.allAuctions(pagination);
     }
 }

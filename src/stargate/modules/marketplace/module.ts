@@ -12,7 +12,10 @@ import { MsgCreateCollection, MsgPublishCollection, MsgPublishNft,
         MsgMintNft, MsgAddAdmin, MsgRemoveAdmin } from './proto-types/tx';
 
 import { Royalty } from './proto-types/royalty';
-
+import { msgPublishAuction, msgPlaceBid, msgAcceptBid } from './types';
+import { Duration } from 'cosmjs-types/google/protobuf/duration';
+import { MsgPublishAuction, MsgPlaceBid, MsgAcceptBid } from './proto-types/tx';
+import { encodeAuction, EnglishAuctionRequest, DutchAuctionRequest } from './auctions';
 
 export class MarketplaceModule {
     private readonly _client: ClientSimulateFn;
@@ -31,7 +34,10 @@ export class MarketplaceModule {
             msgVerifyCollection,
             msgUnverifyCollection,
             msgAddAdmin,
-            msgRemoveAdmin
+            msgRemoveAdmin,
+            msgPublishAuction,
+            msgPlaceBid,
+            msgAcceptBid
         ]);
     }
 
@@ -365,5 +371,82 @@ export class MarketplaceModule {
             msg: msgEncoded,
             fee: fee
         }
+    }
+
+    public async msgPublishAuction(
+        creator: string,
+        tokenId: string,
+        denomId: string,
+        duration: Duration,
+        auction: EnglishAuctionRequest | DutchAuctionRequest,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject; fee: StdFee }> {
+        const msgEncoded = {
+            typeUrl: msgPublishAuction.typeUrl,
+            value: MsgPublishAuction.fromPartial({
+                creator: creator,
+                denomId: denomId,
+                tokenId: tokenId,
+                duration: duration,
+                auction: encodeAuction(auction)
+            })
+        };
+
+        const fee = await estimateFee(this._client, creator, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee
+        };
+    }
+
+    public async msgPlaceBid(
+        bidder: string,
+        auctionId: string,
+        amount: Coin,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject; fee: StdFee }> {
+        const msgEncoded = {
+            typeUrl: msgPlaceBid.typeUrl,
+            value: MsgPlaceBid.fromPartial({
+                bidder: bidder,
+                auctionId: auctionId,
+                amount: amount
+            })
+        };
+
+        const fee = await estimateFee(this._client, bidder, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee
+        };
+    }
+
+    public async msgAcceptBid(
+        sender: string,
+        auctionId: string,
+        gasPrice: GasPrice,
+        gasMultiplier = DEFAULT_GAS_MULTIPLIER,
+        memo = ""
+    ): Promise<{ msg: EncodeObject; fee: StdFee }> {
+        const msgEncoded = {
+            typeUrl: msgAcceptBid.typeUrl,
+            value: MsgAcceptBid.fromPartial({
+                sender: sender,
+                auctionId: auctionId
+            })
+        };
+
+        const fee = await estimateFee(this._client, sender, [msgEncoded], gasPrice, gasMultiplier, memo);
+
+        return {
+            msg: msgEncoded,
+            fee: fee,
+        };
     }
 }
