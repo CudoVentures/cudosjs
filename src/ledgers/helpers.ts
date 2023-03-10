@@ -14,6 +14,7 @@ export enum SUPPORTED_WALLET {
 }
 
 export enum SUPPORTED_BROWSER {
+    opera = 'opera',
     chrome = 'chrome',
     firefox = 'firefox',
     edge = 'edge',
@@ -22,6 +23,7 @@ export enum SUPPORTED_BROWSER {
 export const SUPPORTED_EXTENSIONS: WALLET_EXTENSION = {
     [SUPPORTED_WALLET.Keplr]: {
         URL: {
+            [SUPPORTED_BROWSER.opera]: 'https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en',
             [SUPPORTED_BROWSER.chrome]: 'https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en',
             [SUPPORTED_BROWSER.firefox]: 'https://addons.mozilla.org/en-US/firefox/addon/keplr/',
             [SUPPORTED_BROWSER.edge]: 'https://microsoftedge.microsoft.com/addons/detail/keplr/efknohjclbjfppcmniflbmnokbihoofp?hl=en-GB'
