@@ -4,6 +4,68 @@ import { decodeSignature, StdSignature } from '../amino';
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import { bech32 } from 'bech32'
 
+import AgoricImg from './networkImgs/agoric.svg'
+import AssetMantleImg from './networkImgs/assetmantle.png'
+import AkashImg from './networkImgs/akt.svg'
+import AxelarImg from './networkImgs/axelar.svg'
+import BandProtocolImg from './networkImgs/band.svg'
+import BostromImg from './networkImgs/bostrom.png'
+import BitCannaImg from './networkImgs/bcna.svg'
+import BitsongImg from './networkImgs/btsg.svg'
+import TerraImg from './networkImgs/luna2.png'
+import PersistenceImg from './networkImgs/xprt.png'
+import CantoImg from './networkImgs/canto.png'
+import CerberusImg from './networkImgs/cerberus.png'
+import ChihuahuaImg from './networkImgs/huahua.png'
+import ComdexImg from './networkImgs/cmdx.svg'
+import CoreumImg from './networkImgs/coreum.svg'
+import CosmosImg from './networkImgs/atom.svg'
+import CronosImg from './networkImgs/cro.png'
+import CrescentImg from './networkImgs/crescent.svg'
+import CudosImg from './networkImgs/cudos.svg'
+import DesmosImg from './networkImgs/desmos.svg'
+import eMoneyImg from './networkImgs/emoney.png'
+import EvmosImg from './networkImgs/evmos.svg'
+import FetchAiImg from './networkImgs/fetch.png'
+import GravityBridgeImg from './networkImgs/grav.svg'
+import InjectiveImg from './networkImgs/injective.png'
+import StarnameImg from './networkImgs/iov.png'
+import IrisNetworkImg from './networkImgs/iris.svg'
+import IXOImg from './networkImgs/ixo.png'
+import JunoImg from './networkImgs/juno.svg'
+import KavaImg from './networkImgs/kava.png'
+import KonstellationImg from './networkImgs/darc.svg'
+import KujiraImg from './networkImgs/kujira.png'
+import KYVEImg from './networkImgs/kyve.svg'
+import KiChainImg from './networkImgs/ki.svg'
+import LikeCoinImg from './networkImgs/likecoin.svg'
+import LumNetworkImg from './networkImgs/lum.svg'
+import MarsImg from './networkImgs/mars-token.svg'
+import MediblocImg from './networkImgs/medibloc.png'
+import NobleImg from './networkImgs/stake.png'
+import NyxImg from './networkImgs/nyx.png'
+import OsmosisImg from './networkImgs/osmosis.svg'
+import OmniFlixHubImg from './networkImgs/omniflixhub.png'
+import OnomyImg from './networkImgs/nom.svg'
+import PassageImg from './networkImgs/pasg.png'
+import ProvenanceImg from './networkImgs/provenance.jpeg'
+import QuasarImg from './networkImgs/quasar.svg'
+import QuicksilverImg from './networkImgs/qck.png'
+import RegenNetworkImg from './networkImgs/regen.png'
+import RizonImg from './networkImgs/rizon.png'
+import SecretNetworkImg from './networkImgs/scrt.svg'
+import SentinelImg from './networkImgs/dvpn.png'
+import ShentuImg from './networkImgs/certik.png'
+import SifchainImg from './networkImgs/sifchain.png'
+import SommelierImg from './networkImgs/sommelier.png'
+import StaFiHubImg from './networkImgs/stafihub.png'
+import StargazeImg from './networkImgs/stars.png'
+import StrideImg from './networkImgs/strd.svg'
+import TgradeImg from './networkImgs/tgrade.svg'
+import TeritoriImg from './networkImgs/teritori.svg'
+import XPLAImg from './networkImgs/xpla.svg'
+import UmeeImg from './networkImgs/umee.png'
+
 declare let window: {
     keplr: any;
     cosmostation: any;
@@ -145,70 +207,70 @@ const CHAIN_IDS = {
 }
 
 const CHAIN_ID_TO_ATOMSCAN_NETWORK_LOGO = {
-    [CHAIN_IDS.Agoric]: 'https://atomscan.com/img/icons/chains/agoric.svg',
-    [CHAIN_IDS.AssetMantle]: 'https://atomscan.com/img/icons/chains/assetmantle.png',
-    [CHAIN_IDS.Akash]: 'https://atomscan.com/img/icons/chains/akt.svg',
-    [CHAIN_IDS.Axelar]: 'https://atomscan.com/img/icons/chains/axelar.svg',
-    [CHAIN_IDS["Band Protocol"]]: 'https://atomscan.com/img/icons/chains/band.svg',
-    [CHAIN_IDS.Bostrom]: 'https://atomscan.com/img/icons/chains/bostrom.png',
-    [CHAIN_IDS.BitCanna]: 'https://atomscan.com/img/icons/chains/bcna.svg',
-    [CHAIN_IDS.Bitsong]: 'https://atomscan.com/img/icons/chains/btsg.svg',
-    [CHAIN_IDS.Terra]: 'https://atomscan.com/img/icons/chains/luna2.png',
-    [CHAIN_IDS["Terra V2"]]: 'https://atomscan.com/img/icons/chains/luna2.png',
-    [CHAIN_IDS.Persistence]: 'https://atomscan.com/img/icons/chains/xprt.png',
-    [CHAIN_IDS.Canto]: 'https://atomscan.com/img/icons/chains/canto.png',
-    [CHAIN_IDS.Cerberus]: '	https://atomscan.com/img/icons/chains/cerberus.png',
-    [CHAIN_IDS.Chihuahua]: 'https://atomscan.com/img/icons/chains/huahua.png',
-    [CHAIN_IDS.Comdex]: 'https://atomscan.com/img/icons/chains/cmdx.svg',
-    [CHAIN_IDS.Coreum]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/coreum/images/coreum.svg',
-    [CHAIN_IDS.Cosmos]: 'https://atomscan.com/img/icons/chains/atom.svg',
-    [CHAIN_IDS.Cronos]: 'https://atomscan.com/img/icons/chains/cro.png',
-    [CHAIN_IDS.Crescent]: 'https://atomscan.com/img/icons/chains/crescent.svg',
-    [CHAIN_IDS.Cudos]: 'https://atomscan.com/img/icons/chains/cudos.svg',
-    [CHAIN_IDS.Desmos]: 'https://atomscan.com/img/icons/chains/desmos.svg',
-    [CHAIN_IDS["e-Money"]]: 'https://atomscan.com/img/icons/chains/emoney.png',
-    [CHAIN_IDS.Evmos]: 'https://atomscan.com/img/icons/chains/evmos.svg',
-    [CHAIN_IDS["Fetch.ai"]]: 'https://atomscan.com/img/icons/chains/fetch.png',
-    [CHAIN_IDS["Gravity Bridge"]]: 'https://atomscan.com/img/icons/chains/grav.svg',
-    [CHAIN_IDS.Injective]: 'https://atomscan.com/img/icons/chains/injective.png',
-    [CHAIN_IDS.Starname]: 'https://atomscan.com/img/icons/chains/iov.png',
-    [CHAIN_IDS["Iris Network"]]: 'https://atomscan.com/img/icons/chains/iris.svg',
-    [CHAIN_IDS.IXO]: 'https://atomscan.com/img/icons/chains/ixo.png',
-    [CHAIN_IDS["IXO V2"]]: 'https://atomscan.com/img/icons/chains/ixo.png',
-    [CHAIN_IDS.Juno]: 'https://atomscan.com/img/icons/chains/juno.svg',
-    [CHAIN_IDS.Kava]: 'https://atomscan.com/img/icons/chains/kava.png',
-    [CHAIN_IDS.Konstellation]: 'https://atomscan.com/img/icons/chains/darc.svg',
-    [CHAIN_IDS.Kujira]: 'https://atomscan.com/img/icons/chains/kujira.png',
-    [CHAIN_IDS.KYVE]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/kyve/images/kyve.svg',
-    [CHAIN_IDS["Ki-Chain"]]: 'https://atomscan.com/img/icons/chains/ki.svg',
-    [CHAIN_IDS.LikeCoin]: 'https://atomscan.com/img/icons/chains/likecoin.svg',
-    [CHAIN_IDS["Lum Network"]]: 'https://atomscan.com/img/icons/chains/lum.svg',
-    [CHAIN_IDS.Mars]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/mars/images/mars-token.svg',
-    [CHAIN_IDS.Medibloc]: 'https://atomscan.com/img/icons/chains/medibloc.png',
-    [CHAIN_IDS.Noble]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/stake.png',
-    [CHAIN_IDS.Nyx]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/nyx/images/nyx.png',
-    [CHAIN_IDS.Osmosis]: 'https://atomscan.com/img/icons/chains/osmosis.svg',
-    [CHAIN_IDS["OmniFlix Hub"]]: 'https://atomscan.com/img/icons/chains/omniflixhub.png',
-    [CHAIN_IDS.Onomy]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/onomy/images/nom.svg',
-    [CHAIN_IDS.Passage]: 'https://atomscan.com/img/icons/chains/pasg.png',
-    [CHAIN_IDS.Provenance]: 'https://atomscan.com/img/icons/chains/provenance.jpeg',
-    [CHAIN_IDS.Quasar]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/quasar/images/quasar.svg',
-    [CHAIN_IDS.Quicksilver]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/quicksilver/images/qck.png',
-    [CHAIN_IDS["Quicksilver V2"]]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/quicksilver/images/qck.png',
-    [CHAIN_IDS["Regen Network"]]: 'https://atomscan.com/img/icons/chains/regen.png',
-    [CHAIN_IDS.Rizon]: 'https://atomscan.com/img/icons/chains/rizon.png',
-    [CHAIN_IDS["Secret Network"]]: 'https://atomscan.com/img/icons/chains/scrt.svg',
-    [CHAIN_IDS.Sentinel]: 'https://atomscan.com/img/icons/chains/dvpn.png',
-    [CHAIN_IDS.Shentu]: 'https://atomscan.com/img/icons/chains/certik.png',
-    [CHAIN_IDS.Sifchain]: 'https://atomscan.com/img/icons/chains/sifchain.png',
-    [CHAIN_IDS.Sommelier]: 'https://atomscan.com/img/icons/chains/sommelier.png',
-    [CHAIN_IDS["StaFi Hub"]]: 'https://atomscan.com/img/icons/chains/stafihub.png',
-    [CHAIN_IDS.Stargaze]: 'https://atomscan.com/img/icons/chains/stars.png',
-    [CHAIN_IDS.Stride]: 'https://atomscan.com/img/icons/chains/strd.svg',
-    [CHAIN_IDS.Tgrade]: 'https://atomscan.com/img/icons/chains/tgrade.svg',
-    [CHAIN_IDS.Teritori]: 'https://atomscan.com/img/icons/chains/teritori.svg',
-    [CHAIN_IDS.XPLA]: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/xpla/images/xpla.svg',
-    [CHAIN_IDS.Umee]: 'https://atomscan.com/img/icons/chains/umee.png',
+    [CHAIN_IDS.Agoric]: AgoricImg,
+    [CHAIN_IDS.AssetMantle]: AssetMantleImg,
+    [CHAIN_IDS.Akash]: AkashImg,
+    [CHAIN_IDS.Axelar]: AxelarImg,
+    [CHAIN_IDS["Band Protocol"]]: BandProtocolImg,
+    [CHAIN_IDS.Bostrom]: BostromImg,
+    [CHAIN_IDS.BitCanna]: BitCannaImg,
+    [CHAIN_IDS.Bitsong]: BitsongImg,
+    [CHAIN_IDS.Terra]: TerraImg,
+    [CHAIN_IDS["Terra V2"]]: TerraImg,
+    [CHAIN_IDS.Persistence]: PersistenceImg,
+    [CHAIN_IDS.Canto]: CantoImg,
+    [CHAIN_IDS.Cerberus]: CerberusImg,
+    [CHAIN_IDS.Chihuahua]: ChihuahuaImg,
+    [CHAIN_IDS.Comdex]: ComdexImg,
+    [CHAIN_IDS.Coreum]: CoreumImg,
+    [CHAIN_IDS.Cosmos]: CosmosImg,
+    [CHAIN_IDS.Cronos]: CronosImg,
+    [CHAIN_IDS.Crescent]: CrescentImg,
+    [CHAIN_IDS.Cudos]: CudosImg,
+    [CHAIN_IDS.Desmos]: DesmosImg,
+    [CHAIN_IDS["e-Money"]]: eMoneyImg,
+    [CHAIN_IDS.Evmos]: EvmosImg,
+    [CHAIN_IDS["Fetch.ai"]]: FetchAiImg,
+    [CHAIN_IDS["Gravity Bridge"]]: GravityBridgeImg,
+    [CHAIN_IDS.Injective]: InjectiveImg,
+    [CHAIN_IDS.Starname]: StarnameImg,
+    [CHAIN_IDS["Iris Network"]]: IrisNetworkImg,
+    [CHAIN_IDS.IXO]: IXOImg,
+    [CHAIN_IDS["IXO V2"]]: IXOImg,
+    [CHAIN_IDS.Juno]: JunoImg,
+    [CHAIN_IDS.Kava]: KavaImg,
+    [CHAIN_IDS.Konstellation]: KonstellationImg,
+    [CHAIN_IDS.Kujira]: KujiraImg,
+    [CHAIN_IDS.KYVE]: KYVEImg,
+    [CHAIN_IDS["Ki-Chain"]]: KiChainImg,
+    [CHAIN_IDS.LikeCoin]: LikeCoinImg,
+    [CHAIN_IDS["Lum Network"]]: LumNetworkImg,
+    [CHAIN_IDS.Mars]: MarsImg,
+    [CHAIN_IDS.Medibloc]: MediblocImg,
+    [CHAIN_IDS.Noble]: NobleImg,
+    [CHAIN_IDS.Nyx]: NyxImg,
+    [CHAIN_IDS.Osmosis]: OsmosisImg,
+    [CHAIN_IDS["OmniFlix Hub"]]: OmniFlixHubImg,
+    [CHAIN_IDS.Onomy]: OnomyImg,
+    [CHAIN_IDS.Passage]: PassageImg,
+    [CHAIN_IDS.Provenance]: ProvenanceImg,
+    [CHAIN_IDS.Quasar]: QuasarImg,
+    [CHAIN_IDS.Quicksilver]: QuicksilverImg,
+    [CHAIN_IDS["Quicksilver V2"]]: QuicksilverImg,
+    [CHAIN_IDS["Regen Network"]]: RegenNetworkImg,
+    [CHAIN_IDS.Rizon]: RizonImg,
+    [CHAIN_IDS["Secret Network"]]: SecretNetworkImg,
+    [CHAIN_IDS.Sentinel]: SentinelImg,
+    [CHAIN_IDS.Shentu]: ShentuImg,
+    [CHAIN_IDS.Sifchain]: SifchainImg,
+    [CHAIN_IDS.Sommelier]: SommelierImg,
+    [CHAIN_IDS["StaFi Hub"]]: StaFiHubImg,
+    [CHAIN_IDS.Stargaze]: StargazeImg,
+    [CHAIN_IDS.Stride]: StrideImg,
+    [CHAIN_IDS.Tgrade]: TgradeImg,
+    [CHAIN_IDS.Teritori]: TeritoriImg,
+    [CHAIN_IDS.XPLA]: XPLAImg,
+    [CHAIN_IDS.Umee]: UmeeImg,
 }
 
 const CHAIN_ID_TO_CHAIN_NAME = {
