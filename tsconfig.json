@@ -1,4 +1,3 @@
-
 {
   "compilerOptions": {
     "baseUrl": ".",
@@ -22,11 +21,8 @@
     "strict": true,
     "target": "es2017",
     "outDir": "build",
-    "rootDir": "src"
+    "rootDir": "src",
+    "skipLibCheck": true
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }
-
-

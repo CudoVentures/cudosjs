@@ -4,8 +4,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Temporary testing data
-tests/**/test-data/
-tests/**/cudos-data/
+cudos-node
 
 # Dependency directories
 node_modules/
@@ -42,6 +41,3 @@ build/
 
 # package-lock.json
 package-lock.json
-
-# yarn.lock
-yarn.lock
