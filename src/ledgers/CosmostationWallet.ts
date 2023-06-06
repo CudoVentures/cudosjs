@@ -107,7 +107,7 @@ export class CosmostationWallet extends Ledger {
 
     async getName(): Promise<string> {
         try {
-            const account = await this.provider?.requestAccount(this.cosmostationWalletConfig.CHAIN_NAME);
+            const account = await this.provider?.requestAccount(this.cosmostationWalletConfig.CHAIN_ID);
 
             if (!account) {
                 throw new Error('Failed to request account');
