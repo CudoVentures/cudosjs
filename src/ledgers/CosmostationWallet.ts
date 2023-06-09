@@ -6,6 +6,7 @@ import { Ledger } from './Ledger';
 import { CudosNetworkConsts } from '../utils';
 import { isExtensionEnabled, SUPPORTED_WALLET } from '.';
 import { StdSignature } from '../amino';
+import { getLedgerSigner } from './helpers';
 
 declare let fetch: (url: string) => Promise<any>;
 
@@ -72,7 +73,11 @@ export class CosmostationWallet extends Ledger {
             this.accountAddress = account.address;
             this.connected = true;
 
-            this.offlineSigner = await getOfflineSigner(this.cosmostationWalletConfig.CHAIN_ID);;
+            if (account.isLedger) {
+                this.offlineSigner = await getLedgerSigner(this.provider, account, this.cosmostationWalletConfig.CHAIN_ID)
+            } else {
+                this.offlineSigner = await getOfflineSigner(this.cosmostationWalletConfig.CHAIN_ID);
+            }
             this.cosmostationEvent = this.provider.onAccountChanged(this.accountChangeEventListener);
         } catch (e: any) {
             if (e instanceof InstallError) {
@@ -107,7 +112,7 @@ export class CosmostationWallet extends Ledger {
 
     async getName(): Promise<string> {
         try {
-            const account = await this.provider?.requestAccount(this.cosmostationWalletConfig.CHAIN_ID);
+            const account = await this.provider?.requestAccount(this.cosmostationWalletConfig.CHAIN_NAME);
 
             if (!account) {
                 throw new Error('Failed to request account');
@@ -130,7 +135,7 @@ export class CosmostationWallet extends Ledger {
 
     private accountChangeEventListener = async (): Promise<void> => {
         if (this.offlineSigner !== null && this.offlineSigner !== undefined) {
-            this.accountAddress = (await this.offlineSigner.getAccounts())[0].address;
+            this.accountAddress = (await this.provider?.requestAccount(this.cosmostationWalletConfig.CHAIN_ID))?.address!;
         }
 
         this.addressChangeCallbacks.forEach((callback: (address: string) => void) => callback(this.accountAddress ?? ''));

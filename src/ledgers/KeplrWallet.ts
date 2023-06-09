@@ -10,6 +10,7 @@ declare let fetch: (url: string) => Promise<any>;
 declare let window: {
     keplr: any;
     getOfflineSigner: any;
+    getOfflineSignerAuto: any;
     addEventListener: (eventName: string, callback: () => void) => void;
     removeEventListener: (eventName: string, callback: () => void) => void;
 }
@@ -136,10 +137,11 @@ export class KeplrWallet extends Ledger {
                 },
             };
 
-            const offlineSigner = window.getOfflineSigner(this.keplrWalletConfig.CHAIN_ID);
+            const offlineSigner = await window.getOfflineSignerAuto(this.keplrWalletConfig.CHAIN_ID);
+            const key = await window.keplr?.getKey(this.keplrWalletConfig.CHAIN_ID);
 
             this.offlineSigner = offlineSigner;
-            this.accountAddress = (await offlineSigner.getAccounts())[0].address;
+            this.accountAddress = key?.bech32Address!;
             this.connected = true;
 
             window.addEventListener("keplr_keystorechange", this.accountChangeEventListener);
@@ -159,12 +161,9 @@ export class KeplrWallet extends Ledger {
 
     async getBalance(): Promise<BigNumber> {
         try {
-            const offlineSigner = window.getOfflineSigner(this.keplrWalletConfig.CHAIN_ID);
-            const account = (await offlineSigner.getAccounts())[0];
-
-            const url = `${this.keplrWalletConfig.API}/cosmos/bank/v1beta1/balances/${account.address}/by_denom?denom=${CudosNetworkConsts.CURRENCY_DENOM}`;
+            const key = await window.keplr?.getKey(this.keplrWalletConfig.CHAIN_ID);
+            const url = `${this.keplrWalletConfig.API}/cosmos/bank/v1beta1/balances/${key?.bech32Address!}/by_denom?denom=${CudosNetworkConsts.CURRENCY_DENOM}`;
             const amount = (await (await fetch(url)).json()).balance.amount;
-
             return new BigNumber(amount).div(CudosNetworkConsts.CURRENCY_1_CUDO);
         } catch (e) {
             console.log(e);
@@ -187,7 +186,7 @@ export class KeplrWallet extends Ledger {
 
     private accountChangeEventListener = async (): Promise<void> => {
         if (this.offlineSigner !== null && this.offlineSigner !== undefined) {
-            this.accountAddress = (await this.offlineSigner.getAccounts())[0].address;
+            this.accountAddress = (await window.keplr.getKey(this.keplrWalletConfig.CHAIN_ID)).bech32Address;
         }
 
         this.addressChangeCallbacks.forEach((callback: (address: string) => void) => callback(this.accountAddress ?? ''));

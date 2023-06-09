@@ -1,8 +1,10 @@
 import { CudosNetworkConsts } from '../utils';
 import { detect as detectBrowser } from 'detect-browser';
-import { decodeSignature, StdSignature } from '../amino';
+import { decodeSignature, OfflineAminoSigner, StdSignature } from '../amino';
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import { bech32 } from 'bech32'
+import { Cosmos } from '@cosmostation/extension-client';
+import { RequestAccountResponse, SignAminoDoc } from '@cosmostation/extension-client/types/message';
 
 declare let window: {
     keplr: any;
@@ -472,4 +474,37 @@ export const getCosmosNetworkImg = (chainId: string): string => {
 
 export const getCosmosNetworkPrettyName = (chainId: string): string => {
     return CHAIN_ID_TO_CHAIN_NAME[chainId]
+}
+
+export const getLedgerSigner = async (
+    connector: Cosmos,
+    accountInfo: RequestAccountResponse,
+    chainId: string
+) => {
+    const signer: OfflineAminoSigner = {
+        getAccounts: async () => {
+            return [
+                {
+                    address: accountInfo.address,
+                    pubkey: accountInfo.publicKey,
+                    algo: 'secp256k1'
+                }
+            ]
+        },
+        signAmino: async (_, signDoc) => {
+            const response = await connector.signAmino(
+                chainId,
+                signDoc as unknown as SignAminoDoc
+            )
+
+            return {
+                signed: response.signed_doc,
+                signature: {
+                    pub_key: response.pub_key,
+                    signature: response.signature
+                }
+            }
+        }
+    }
+    return signer
 }
