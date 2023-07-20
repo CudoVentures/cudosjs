@@ -3,10 +3,13 @@ import { detect as detectBrowser } from 'detect-browser';
 import { decodeSignature, OfflineAminoSigner, StdSignature } from '../amino';
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import { bech32 } from 'bech32'
-import { Cosmos } from '@cosmostation/extension-client';
+import { cosmos, Cosmos } from '@cosmostation/extension-client';
 import { RequestAccountResponse, SignAminoDoc } from '@cosmostation/extension-client/types/message';
+import { OfflineSigner } from '@cosmjs/proto-signing';
+import { getOfflineSigner } from '@cosmostation/cosmos-client';
 
 declare let window: {
+    getOfflineSignerAuto: any;
     keplr: any;
     cosmostation: any;
 }
@@ -517,4 +520,23 @@ export const getLedgerSigner = async (
         }
     }
     return signer
+}
+
+const cosmostationSigner = async (chainId: string): Promise<OfflineSigner> => {
+    const provider = await cosmos()
+    const account = await provider.requestAccount(chainId)
+    if (account.isLedger) {
+        return getLedgerSigner(provider, account, chainId)
+    }
+    return getOfflineSigner(chainId);
+}
+
+export const getOfflineSignerByType = async (walletName: SUPPORTED_WALLET, chainId: string): Promise<OfflineSigner | undefined> => {
+    if (walletName === SUPPORTED_WALLET.Keplr) {
+        return await window.getOfflineSignerAuto(chainId);
+    }
+    if (walletName === SUPPORTED_WALLET.Cosmostation) {
+        return cosmostationSigner(chainId)
+    }
+    return undefined
 }

@@ -2,6 +2,7 @@ export * from './KeplrWallet'
 export * from './CosmostationWallet'
 export * from './Ledger'
 export {
+    getOfflineSignerByType,
     getCosmosNetworkImg,
     getAtomscanExplorerUrl,
     getCosmosNetworkPrettyName,
