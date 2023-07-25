@@ -114,8 +114,6 @@ const queryClient = await StargateClient.connect(rpc)
 
 First we need an RPC endpoint, that will be used to connect to the network. Then a `StargateClient` is created by connecting it to the network.
 
-** In this example the client is connecting to a local test network, created using [cudos-blast](https://github.com/CudoVentures/cudos-blast).
-
 ```
 ...
 

@@ -1,19 +1,47 @@
 on: pull_request
 name: Test
 
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        name: Clone repository and checkout branch
-      - uses: actions/setup-node@v2
-        name: Setup node.js
+      - name: Clone repository and checkout branch
+        uses: actions/checkout@v3
+
+      - name: Setup node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: rm -r .npmrc
-        name: Remove .npmrc for the test run
-      - run: yarn
-        name: Install dependencies
-      - run: yarn test
-        name: Run tests
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Get cudos-node target version from .env
+        uses: falti/dotenv-action@v1.0.4
+        id: dotenv
+        with:
+          path: src/jest/cudos-node.local.env
+
+      - name: Clone cudos-node repository
+        uses: actions/checkout@v3
+        with:
+          repository: CudoVentures/cudos-node
+          ref: ${{ steps.dotenv.outputs.BINARY_VERSION }}
+          path: src/jest/cudos-node
+
+      - name: Setup go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.18
+          cache-dependency-path: src/jest/cudos-node/go.sum
+
+      - name: Install cudos-node binary
+        run: make install
+        working-directory: src/jest/cudos-node
+
+      - name: Run tests
+        run: yarn test
