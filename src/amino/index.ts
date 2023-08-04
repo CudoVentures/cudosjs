@@ -4,7 +4,6 @@ export {
   rawEd25519PubkeyToRawAddress,
   rawSecp256k1PubkeyToRawAddress,
 } from "@cosmjs/amino";
-export { Coin, coin, coins } from "@cosmjs/amino";
 export {
   decodeAminoPubkey,
   decodeBech32Pubkey,

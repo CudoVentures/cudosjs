@@ -3,10 +3,10 @@ import {
   StdSignature,
   encodeSecp256k1Pubkey,
   decodeSignature,
-  coins,
   pubkeyToAddress,
 } from "../amino";
 import {
+  coins,
   EncodeObject,
   makeAuthInfoBytes,
   makeSignBytes,
@@ -34,7 +34,9 @@ export async function verifyNonceMsgSigner(
   const authInfoBytes = makeAuthInfoBytes(
     [{ pubkey, sequence }],
     coins(0, "acudos"),
-    gasLimit
+    gasLimit,
+    undefined,
+    undefined
   );
   const signDoc = makeSignDoc(bodyBytes, authInfoBytes, chainId, accountNumber);
 

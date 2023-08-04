@@ -1,6 +1,6 @@
 import { SigningCosmWasmClient, SigningCosmWasmClientOptions } from "@cosmjs/cosmwasm-stargate";
 import { OfflineSigner } from "@cosmjs/proto-signing";
-import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { Tendermint37Client } from "@cosmjs/tendermint-rpc";
 import { Cw20Module } from "./modules/cw20";
 
 export class CudosSigningCosmWasmClient extends SigningCosmWasmClient {
@@ -11,7 +11,7 @@ export class CudosSigningCosmWasmClient extends SigningCosmWasmClient {
         signer: OfflineSigner,
         options: SigningCosmWasmClientOptions = {},
       ): Promise<CudosSigningCosmWasmClient> {
-        const tmClient = await Tendermint34Client.connect(endpoint);
+        const tmClient = await Tendermint37Client.connect(endpoint);
         return new CudosSigningCosmWasmClient(tmClient, signer, options);
       }
 
@@ -23,7 +23,7 @@ export class CudosSigningCosmWasmClient extends SigningCosmWasmClient {
       }
 
       protected constructor(
-        tmClient: Tendermint34Client | undefined,
+        tmClient: Tendermint37Client | undefined,
         signer: OfflineSigner,
         options: SigningCosmWasmClientOptions,
       ) {

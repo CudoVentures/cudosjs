@@ -1,5 +1,5 @@
 import { QueryClient, StargateClient, StargateClientOptions } from "@cosmjs/stargate";
-import { HttpEndpoint, Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { HttpEndpoint, Tendermint37Client } from "@cosmjs/tendermint-rpc";
 import { GravityExtension, setupGravityExtension } from "../queries";
 import { checkValidAddress, checkValidValidatorAddress, checkValidNftDenomId, checkValidETHAddress } from "../../../../utils/checks";
 import { CudosNetworkConsts } from "src/utils";
@@ -35,7 +35,7 @@ import{
 export class GravityQueryClient{
     private readonly gravityQueryClient: QueryClient & GravityExtension;
 
-    constructor(tmClient:Tendermint34Client) {
+    constructor(tmClient:Tendermint37Client) {
         this.gravityQueryClient = QueryClient.withExtensions(tmClient,setupGravityExtension)
     }
 

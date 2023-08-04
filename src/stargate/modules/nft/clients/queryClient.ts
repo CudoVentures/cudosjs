@@ -1,5 +1,5 @@
 
-import { HttpEndpoint, Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { HttpEndpoint, Tendermint37Client } from "@cosmjs/tendermint-rpc";
 import { QueryClient, StargateClient, StargateClientOptions } from "@cosmjs/stargate";
 import { NftExtension, setupNftExtension } from "../../../modules/nft/queries";
 import { QueryApprovalsIsApprovedForAllResponse, QueryApprovalsNFTResponse, QueryCollectionResponse, QueryDenomByNameRequest, QueryDenomByNameResponse, QueryDenomBySymbolResponse, QueryDenomRequest, QueryDenomResponse, QueryDenomsResponse, QueryNFTResponse, QueryOwnerResponse, QuerySupplyResponse } from "../../../modules/nft/proto-types/query";
@@ -10,7 +10,7 @@ export class NFTQueryClient{
     private readonly nftQueryClient: QueryClient & NftExtension;
     
 
-    constructor(tmClient:Tendermint34Client) {
+    constructor(tmClient:Tendermint37Client) {
         this.nftQueryClient = QueryClient.withExtensions(tmClient,setupNftExtension)
     }
 

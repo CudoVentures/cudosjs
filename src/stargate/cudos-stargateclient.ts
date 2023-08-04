@@ -1,5 +1,5 @@
 import { IndexedTx, StargateClient, StargateClientOptions } from '@cosmjs/stargate';
-import { HttpEndpoint, Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { HttpEndpoint, Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { GroupQueryClient } from './modules/group/clients/queryClient';
 import { NFTQueryClient } from './modules/nft/clients/queryClient';
 import { GravityQueryClient } from './modules/gravity/clients/queryClient';
@@ -23,11 +23,11 @@ export class CudosStargateClient extends StargateClient {
         endpoint: string | HttpEndpoint,
         options: StargateClientOptions = {}
     ): Promise<CudosStargateClient> {
-        const tmClient = await Tendermint34Client.connect(endpoint);
+        const tmClient = await Tendermint37Client.connect(endpoint);
         return new CudosStargateClient(tmClient, options);
     }
 
-    protected constructor(tmClient: Tendermint34Client, options: StargateClientOptions) {
+    protected constructor(tmClient: Tendermint37Client, options: StargateClientOptions) {
         super(tmClient, options);
         this.groupQueryClient = new GroupQueryClient(tmClient)
         this.nftQueryClient =  new NFTQueryClient(tmClient)

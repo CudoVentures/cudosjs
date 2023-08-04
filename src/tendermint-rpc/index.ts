@@ -1,1 +1,1 @@
-export { Tendermint34Client } from "@cosmjs/tendermint-rpc"
+export { Tendermint37Client } from "@cosmjs/tendermint-rpc"

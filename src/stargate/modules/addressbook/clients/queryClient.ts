@@ -1,4 +1,4 @@
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { QueryClient } from '@cosmjs/stargate';
 
 import {
@@ -14,7 +14,7 @@ import { AddressbookExtension, setupAddressbookExtension } from '../queries';
 export class AddressbookQueryClient {
     private readonly queryClient: QueryClient & AddressbookExtension;
 
-    constructor(tmClient: Tendermint34Client) {
+    constructor(tmClient: Tendermint37Client) {
         this.queryClient = QueryClient.withExtensions(tmClient, setupAddressbookExtension);
     }
 

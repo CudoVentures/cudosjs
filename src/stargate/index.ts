@@ -88,12 +88,7 @@ export {
 export {
   SearchByHeightQuery,
   SearchBySentFromOrToQuery,
-  SearchByTagsQuery,
   SearchTxQuery,
-  SearchTxFilter,
-  isSearchByHeightQuery,
-  isSearchBySentFromOrToQuery,
-  isSearchByTagsQuery,
 } from "@cosmjs/stargate";
 export {
   assertIsDeliverTxSuccess,

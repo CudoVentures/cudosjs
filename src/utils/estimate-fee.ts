@@ -1,8 +1,8 @@
-import { GasPrice, SigningStargateClient, StdFee } from "../stargate";
+import { GasPrice, StdFee } from "../stargate";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { ClientSimulateFn } from "./module-utils";
 import { coins } from "@cosmjs/amino";
-import { Uint53 } from "@cosmjs/math"
+import { Uint64 } from "@cosmjs/math"
 import { DEFAULT_GAS_MULTIPLIER } from "./constants";
 
 export async function estimateFee(
@@ -16,7 +16,7 @@ export async function estimateFee(
     const gasEstimation = await client.simulate(signer, messages, memo);
     const gasLimit = Math.round(gasEstimation * gasMultiplier);
     const { denom, amount: gasPriceAmount } = gasPrice;
-    const amount = Math.ceil(gasPriceAmount.multiply(new Uint53(gasLimit)).toFloatApproximation());
+    const amount = Math.ceil(gasPriceAmount.multiply(Uint64.fromNumber(gasLimit)).toFloatApproximation());
     return {
         amount: coins(amount.toString(), denom),
         gas: gasLimit.toString(),

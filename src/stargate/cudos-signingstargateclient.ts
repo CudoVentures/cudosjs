@@ -15,7 +15,7 @@ import {
   DeliverTxResponse,
   StdFee,
 } from "@cosmjs/stargate";
-import { HttpEndpoint, Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { HttpEndpoint, Tendermint37Client } from "@cosmjs/tendermint-rpc";
 import {
   DEFAULT_GAS_MULTIPLIER,
   encodeNonce,
@@ -45,12 +45,12 @@ export class CudosSigningStargateClient extends SigningStargateClient {
     signer: OfflineSigner,
     options: SigningStargateClientOptions = {}
   ): Promise<CudosSigningStargateClient> {
-    const tmClient = await Tendermint34Client.connect(endpoint);
+    const tmClient = await Tendermint37Client.connect(endpoint);
     return new CudosSigningStargateClient(tmClient, signer, options);
   }
 
   protected constructor(
-    tmClient: Tendermint34Client,
+    tmClient: Tendermint37Client,
     signer: OfflineSigner,
     options: SigningStargateClientOptions
   ) {
@@ -85,7 +85,9 @@ export class CudosSigningStargateClient extends SigningStargateClient {
     const authInfoBytes = makeAuthInfoBytes(
       [{ pubkey, sequence }],
       coins(0, "acudos"),
-      gasLimit
+      gasLimit,
+      undefined,
+      undefined
     );
 
     const txBody = encodeNonce(arbitraryMessage);

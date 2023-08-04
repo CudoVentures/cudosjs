@@ -2,7 +2,7 @@ export {
   MsgExecuteContract,
   MsgInstantiateContract
 } from "cosmjs-types/cosmwasm/wasm/v1/tx";
-export { cosmWasmTypes } from "@cosmjs/cosmwasm-stargate";
+export { wasmTypes } from "@cosmjs/cosmwasm-stargate";
 export {
   Code,
   CodeDetails,

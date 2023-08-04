@@ -1,16 +1,16 @@
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { Tendermint37Client } from "@cosmjs/tendermint-rpc";
 import { Coin } from "@cosmjs/amino";
 import { CURRENCY_DENOM } from "../utils";
 
 export class CudosCosmWasmClient extends CosmWasmClient {
 
     public static override async connect(endpoint: string): Promise<CudosCosmWasmClient> {
-        const tmClient = await Tendermint34Client.connect(endpoint);
+        const tmClient = await Tendermint37Client.connect(endpoint);
         return new CudosCosmWasmClient(tmClient);
       }
 
-      protected constructor(tmClient: Tendermint34Client | undefined) {
+      protected constructor(tmClient: Tendermint37Client | undefined) {
         super(tmClient);
       }
     

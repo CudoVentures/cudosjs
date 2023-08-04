@@ -1,4 +1,4 @@
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { QueryClient } from '@cosmjs/stargate';
 
 import {
@@ -19,7 +19,7 @@ import { MarketplaceExtension, setupMarketplaceExtension } from '../queries';
 export class MarketplaceQueryClient {
     private readonly queryClient: QueryClient & MarketplaceExtension;
 
-    constructor(tmClient: Tendermint34Client) {
+    constructor(tmClient: Tendermint37Client) {
         this.queryClient = QueryClient.withExtensions(tmClient, setupMarketplaceExtension);
     }
 
