@@ -1,22 +1,11 @@
-import { fromBech32 } from "@cosmjs/encoding";
 import { BECH32_PREFIX_ACC_ADDR, BECH32_PREFIX_VAL_ADDR  } from "./constants";
-
+import { isValidCosmosAddress } from "../ledgers";
 
 export function isValidAddress(address: string, requiredPrefix?: string): boolean {
     if (requiredPrefix === undefined) {
         requiredPrefix = BECH32_PREFIX_ACC_ADDR;
     }
-
-    try {
-        const { prefix, data } = fromBech32(address);
-
-        if (prefix !== requiredPrefix) {
-            return false;
-        }
-        return data.length === 20 || data.length === 32;
-    } catch {
-      return false;
-    }
+    return isValidCosmosAddress(address, requiredPrefix)
 }
 
 export function checkValidAddress(address: string) {

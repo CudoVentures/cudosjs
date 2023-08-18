@@ -453,12 +453,15 @@ export const verifyArbitrarySignature = (signedTx: StdSignature, address: string
     return verified
 }
 
-export const isValidCosmosAddress = (addr: string) => {
+export const isValidCosmosAddress = (addr: string, requiredPrefix?: string) => {
     if (addr === '' || addr === undefined) return false
     try {
         const { prefix: decodedPrefix } = bech32.decode(addr)
-        return addr.toLowerCase().startsWith(decodedPrefix.toLowerCase())
-
+        if (requiredPrefix) {
+            return decodedPrefix === requiredPrefix
+        } else {
+            return addr.toLowerCase().startsWith(decodedPrefix.toLowerCase())
+        }
     } catch {
         // invalid checksum
         return false
