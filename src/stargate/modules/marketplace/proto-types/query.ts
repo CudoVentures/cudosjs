@@ -2,6 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { PageRequest, PageResponse } from "cosmjs-types/cosmos/base/query/v1beta1/pagination";
+import { Any } from "cosmjs-types/google/protobuf/any";
 import { Collection } from "./collection";
 import { Nft } from "./nft";
 import { Params } from "./params";
@@ -9,7 +10,8 @@ import { Params } from "./params";
 export const protobufPackage = "cudoventures.cudosnode.marketplace";
 
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
-export interface QueryParamsRequest {}
+export interface QueryParamsRequest {
+}
 
 /** QueryParamsResponse is response type for the Query/Params RPC method. */
 export interface QueryParamsResponse {
@@ -59,10 +61,28 @@ export interface QueryCollectionByDenomIdResponse {
   Collection?: Collection;
 }
 
-export interface QueryListAdminsRequest {}
+export interface QueryListAdminsRequest {
+}
 
 export interface QueryListAdminsResponse {
   Admins: string[];
+}
+
+export interface QueryGetAuctionRequest {
+  id: Long;
+}
+
+export interface QueryGetAuctionResponse {
+  Auction?: Any;
+}
+
+export interface QueryAllAuctionRequest {
+  pagination?: PageRequest;
+}
+
+export interface QueryAllAuctionResponse {
+  Auctions: Any[];
+  pagination?: PageResponse;
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -96,6 +116,10 @@ export const QueryParamsRequest = {
   toJSON(_: QueryParamsRequest): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(base?: I): QueryParamsRequest {
+    return QueryParamsRequest.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
@@ -144,10 +168,15 @@ export const QueryParamsResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(base?: I): QueryParamsResponse {
+    return QueryParamsResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
     const message = createBaseQueryParamsResponse();
-    message.params =
-      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
@@ -192,11 +221,13 @@ export const QueryGetCollectionRequest = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryGetCollectionRequest>, I>>(
-    object: I,
-  ): QueryGetCollectionRequest {
+  create<I extends Exact<DeepPartial<QueryGetCollectionRequest>, I>>(base?: I): QueryGetCollectionRequest {
+    return QueryGetCollectionRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetCollectionRequest>, I>>(object: I): QueryGetCollectionRequest {
     const message = createBaseQueryGetCollectionRequest();
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
     return message;
   },
 };
@@ -242,14 +273,15 @@ export const QueryGetCollectionResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryGetCollectionResponse>, I>>(
-    object: I,
-  ): QueryGetCollectionResponse {
+  create<I extends Exact<DeepPartial<QueryGetCollectionResponse>, I>>(base?: I): QueryGetCollectionResponse {
+    return QueryGetCollectionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetCollectionResponse>, I>>(object: I): QueryGetCollectionResponse {
     const message = createBaseQueryGetCollectionResponse();
-    message.Collection =
-      object.Collection !== undefined && object.Collection !== null
-        ? Collection.fromPartial(object.Collection)
-        : undefined;
+    message.Collection = (object.Collection !== undefined && object.Collection !== null)
+      ? Collection.fromPartial(object.Collection)
+      : undefined;
     return message;
   },
 };
@@ -295,14 +327,15 @@ export const QueryAllCollectionRequest = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryAllCollectionRequest>, I>>(
-    object: I,
-  ): QueryAllCollectionRequest {
+  create<I extends Exact<DeepPartial<QueryAllCollectionRequest>, I>>(base?: I): QueryAllCollectionRequest {
+    return QueryAllCollectionRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryAllCollectionRequest>, I>>(object: I): QueryAllCollectionRequest {
     const message = createBaseQueryAllCollectionRequest();
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageRequest.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -345,9 +378,7 @@ export const QueryAllCollectionResponse = {
 
   fromJSON(object: any): QueryAllCollectionResponse {
     return {
-      Collection: Array.isArray(object?.Collection)
-        ? object.Collection.map((e: any) => Collection.fromJSON(e))
-        : [],
+      Collection: Array.isArray(object?.Collection) ? object.Collection.map((e: any) => Collection.fromJSON(e)) : [],
       pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
     };
   },
@@ -355,7 +386,7 @@ export const QueryAllCollectionResponse = {
   toJSON(message: QueryAllCollectionResponse): unknown {
     const obj: any = {};
     if (message.Collection) {
-      obj.Collection = message.Collection.map((e) => (e ? Collection.toJSON(e) : undefined));
+      obj.Collection = message.Collection.map((e) => e ? Collection.toJSON(e) : undefined);
     } else {
       obj.Collection = [];
     }
@@ -364,15 +395,16 @@ export const QueryAllCollectionResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryAllCollectionResponse>, I>>(
-    object: I,
-  ): QueryAllCollectionResponse {
+  create<I extends Exact<DeepPartial<QueryAllCollectionResponse>, I>>(base?: I): QueryAllCollectionResponse {
+    return QueryAllCollectionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryAllCollectionResponse>, I>>(object: I): QueryAllCollectionResponse {
     const message = createBaseQueryAllCollectionResponse();
     message.Collection = object.Collection?.map((e) => Collection.fromPartial(e)) || [];
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageResponse.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -417,9 +449,13 @@ export const QueryGetNftRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryGetNftRequest>, I>>(base?: I): QueryGetNftRequest {
+    return QueryGetNftRequest.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<QueryGetNftRequest>, I>>(object: I): QueryGetNftRequest {
     const message = createBaseQueryGetNftRequest();
-    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
     return message;
   },
 };
@@ -464,9 +500,13 @@ export const QueryGetNftResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryGetNftResponse>, I>>(base?: I): QueryGetNftResponse {
+    return QueryGetNftResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<QueryGetNftResponse>, I>>(object: I): QueryGetNftResponse {
     const message = createBaseQueryGetNftResponse();
-    message.Nft = object.Nft !== undefined && object.Nft !== null ? Nft.fromPartial(object.Nft) : undefined;
+    message.Nft = (object.Nft !== undefined && object.Nft !== null) ? Nft.fromPartial(object.Nft) : undefined;
     return message;
   },
 };
@@ -512,12 +552,15 @@ export const QueryAllNftRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryAllNftRequest>, I>>(base?: I): QueryAllNftRequest {
+    return QueryAllNftRequest.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<QueryAllNftRequest>, I>>(object: I): QueryAllNftRequest {
     const message = createBaseQueryAllNftRequest();
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageRequest.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -568,7 +611,7 @@ export const QueryAllNftResponse = {
   toJSON(message: QueryAllNftResponse): unknown {
     const obj: any = {};
     if (message.Nft) {
-      obj.Nft = message.Nft.map((e) => (e ? Nft.toJSON(e) : undefined));
+      obj.Nft = message.Nft.map((e) => e ? Nft.toJSON(e) : undefined);
     } else {
       obj.Nft = [];
     }
@@ -577,13 +620,16 @@ export const QueryAllNftResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryAllNftResponse>, I>>(base?: I): QueryAllNftResponse {
+    return QueryAllNftResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<QueryAllNftResponse>, I>>(object: I): QueryAllNftResponse {
     const message = createBaseQueryAllNftResponse();
     message.Nft = object.Nft?.map((e) => Nft.fromPartial(e)) || [];
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageResponse.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -626,6 +672,10 @@ export const QueryCollectionByDenomIdRequest = {
     const obj: any = {};
     message.denomId !== undefined && (obj.denomId = message.denomId);
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryCollectionByDenomIdRequest>, I>>(base?: I): QueryCollectionByDenomIdRequest {
+    return QueryCollectionByDenomIdRequest.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<QueryCollectionByDenomIdRequest>, I>>(
@@ -678,14 +728,19 @@ export const QueryCollectionByDenomIdResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryCollectionByDenomIdResponse>, I>>(
+    base?: I,
+  ): QueryCollectionByDenomIdResponse {
+    return QueryCollectionByDenomIdResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<QueryCollectionByDenomIdResponse>, I>>(
     object: I,
   ): QueryCollectionByDenomIdResponse {
     const message = createBaseQueryCollectionByDenomIdResponse();
-    message.Collection =
-      object.Collection !== undefined && object.Collection !== null
-        ? Collection.fromPartial(object.Collection)
-        : undefined;
+    message.Collection = (object.Collection !== undefined && object.Collection !== null)
+      ? Collection.fromPartial(object.Collection)
+      : undefined;
     return message;
   },
 };
@@ -721,6 +776,10 @@ export const QueryListAdminsRequest = {
   toJSON(_: QueryListAdminsRequest): unknown {
     const obj: any = {};
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryListAdminsRequest>, I>>(base?: I): QueryListAdminsRequest {
+    return QueryListAdminsRequest.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<QueryListAdminsRequest>, I>>(_: I): QueryListAdminsRequest {
@@ -773,9 +832,240 @@ export const QueryListAdminsResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryListAdminsResponse>, I>>(base?: I): QueryListAdminsResponse {
+    return QueryListAdminsResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<QueryListAdminsResponse>, I>>(object: I): QueryListAdminsResponse {
     const message = createBaseQueryListAdminsResponse();
     message.Admins = object.Admins?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseQueryGetAuctionRequest(): QueryGetAuctionRequest {
+  return { id: Long.UZERO };
+}
+
+export const QueryGetAuctionRequest = {
+  encode(message: QueryGetAuctionRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.id.isZero()) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetAuctionRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetAuctionRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAuctionRequest {
+    return { id: isSet(object.id) ? Long.fromValue(object.id) : Long.UZERO };
+  },
+
+  toJSON(message: QueryGetAuctionRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = (message.id || Long.UZERO).toString());
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryGetAuctionRequest>, I>>(base?: I): QueryGetAuctionRequest {
+    return QueryGetAuctionRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetAuctionRequest>, I>>(object: I): QueryGetAuctionRequest {
+    const message = createBaseQueryGetAuctionRequest();
+    message.id = (object.id !== undefined && object.id !== null) ? Long.fromValue(object.id) : Long.UZERO;
+    return message;
+  },
+};
+
+function createBaseQueryGetAuctionResponse(): QueryGetAuctionResponse {
+  return { Auction: undefined };
+}
+
+export const QueryGetAuctionResponse = {
+  encode(message: QueryGetAuctionResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.Auction !== undefined) {
+      Any.encode(message.Auction, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetAuctionResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetAuctionResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Auction = Any.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAuctionResponse {
+    return { Auction: isSet(object.Auction) ? Any.fromJSON(object.Auction) : undefined };
+  },
+
+  toJSON(message: QueryGetAuctionResponse): unknown {
+    const obj: any = {};
+    message.Auction !== undefined && (obj.Auction = message.Auction ? Any.toJSON(message.Auction) : undefined);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryGetAuctionResponse>, I>>(base?: I): QueryGetAuctionResponse {
+    return QueryGetAuctionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetAuctionResponse>, I>>(object: I): QueryGetAuctionResponse {
+    const message = createBaseQueryGetAuctionResponse();
+    message.Auction = (object.Auction !== undefined && object.Auction !== null)
+      ? Any.fromPartial(object.Auction)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryAllAuctionRequest(): QueryAllAuctionRequest {
+  return { pagination: undefined };
+}
+
+export const QueryAllAuctionRequest = {
+  encode(message: QueryAllAuctionRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllAuctionRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryAllAuctionRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllAuctionRequest {
+    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
+  },
+
+  toJSON(message: QueryAllAuctionRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryAllAuctionRequest>, I>>(base?: I): QueryAllAuctionRequest {
+    return QueryAllAuctionRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryAllAuctionRequest>, I>>(object: I): QueryAllAuctionRequest {
+    const message = createBaseQueryAllAuctionRequest();
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryAllAuctionResponse(): QueryAllAuctionResponse {
+  return { Auctions: [], pagination: undefined };
+}
+
+export const QueryAllAuctionResponse = {
+  encode(message: QueryAllAuctionResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.Auctions) {
+      Any.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllAuctionResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryAllAuctionResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Auctions.push(Any.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllAuctionResponse {
+    return {
+      Auctions: Array.isArray(object?.Auctions) ? object.Auctions.map((e: any) => Any.fromJSON(e)) : [],
+      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
+    };
+  },
+
+  toJSON(message: QueryAllAuctionResponse): unknown {
+    const obj: any = {};
+    if (message.Auctions) {
+      obj.Auctions = message.Auctions.map((e) => e ? Any.toJSON(e) : undefined);
+    } else {
+      obj.Auctions = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryAllAuctionResponse>, I>>(base?: I): QueryAllAuctionResponse {
+    return QueryAllAuctionResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryAllAuctionResponse>, I>>(object: I): QueryAllAuctionResponse {
+    const message = createBaseQueryAllAuctionResponse();
+    message.Auctions = object.Auctions?.map((e) => Any.fromPartial(e)) || [];
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -796,6 +1086,10 @@ export interface Query {
   CollectionByDenomId(request: QueryCollectionByDenomIdRequest): Promise<QueryCollectionByDenomIdResponse>;
   /** Queries a list of ListAdmins items. */
   ListAdmins(request: QueryListAdminsRequest): Promise<QueryListAdminsResponse>;
+  /** Queries a Auction by id. */
+  Auction(request: QueryGetAuctionRequest): Promise<QueryGetAuctionResponse>;
+  /** Queries a list of Auction items. */
+  AuctionAll(request: QueryAllAuctionRequest): Promise<QueryAllAuctionResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -811,6 +1105,8 @@ export class QueryClientImpl implements Query {
     this.NftAll = this.NftAll.bind(this);
     this.CollectionByDenomId = this.CollectionByDenomId.bind(this);
     this.ListAdmins = this.ListAdmins.bind(this);
+    this.Auction = this.Auction.bind(this);
+    this.AuctionAll = this.AuctionAll.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -853,6 +1149,18 @@ export class QueryClientImpl implements Query {
     const promise = this.rpc.request(this.service, "ListAdmins", data);
     return promise.then((data) => QueryListAdminsResponse.decode(new _m0.Reader(data)));
   }
+
+  Auction(request: QueryGetAuctionRequest): Promise<QueryGetAuctionResponse> {
+    const data = QueryGetAuctionRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "Auction", data);
+    return promise.then((data) => QueryGetAuctionResponse.decode(new _m0.Reader(data)));
+  }
+
+  AuctionAll(request: QueryAllAuctionRequest): Promise<QueryAllAuctionResponse> {
+    const data = QueryAllAuctionRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "AuctionAll", data);
+    return promise.then((data) => QueryAllAuctionResponse.decode(new _m0.Reader(data)));
+  }
 }
 
 interface Rpc {
@@ -861,21 +1169,14 @@ interface Rpc {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Long
-  ? string | number | Long
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Long ? string | number | Long : T extends Array<infer U> ? Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
+export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {

@@ -1,3 +1,5 @@
+import { DutchAuction, EnglishAuction } from './proto-types/auction';
+import { MsgPublishAuction, MsgPlaceBid, MsgAcceptBid } from './proto-types/tx';
 import { MsgCreateCollection, MsgPublishCollection, MsgPublishNft,
         MsgBuyNft, MsgUpdateRoyalties, MsgUpdatePrice,
         MsgRemoveNft, MsgVerifyCollection, MsgUnverifyCollection,
@@ -63,4 +65,29 @@ export const msgAddAdmin = {
 export const msgRemoveAdmin = {
     typeUrl: PREFIX.concat('MsgRemoveAdmin'),
     type: MsgRemoveAdmin
+};
+
+export const msgPublishAuction = {
+    typeUrl: PREFIX.concat('MsgPublishAuction'),
+    type: MsgPublishAuction
+};
+
+export const msgPlaceBid = {
+    typeUrl: PREFIX.concat('MsgPlaceBid'),
+    type: MsgPlaceBid
+};
+
+export const msgAcceptBid = {
+    typeUrl: PREFIX.concat('MsgAcceptBid'),
+    type: MsgAcceptBid
+};
+
+export const englishAuction = {
+    typeUrl: PREFIX.concat('EnglishAuction'),
+    type: EnglishAuction
+};
+
+export const dutchAuction = {
+    typeUrl: PREFIX.concat('DutchAuction'),
+    type: DutchAuction
 };

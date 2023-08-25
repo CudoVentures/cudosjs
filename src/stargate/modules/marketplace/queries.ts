@@ -11,7 +11,9 @@ import {
     QueryGetNftResponse,
     QueryAllNftResponse,
     QueryParamsResponse,
-    QueryListAdminsResponse
+    QueryListAdminsResponse,
+    QueryAllAuctionResponse,
+    QueryGetAuctionResponse
 } from './proto-types/query';
 
 export interface MarketplaceExtension {
@@ -22,7 +24,9 @@ export interface MarketplaceExtension {
         readonly nft: (id: Long) => Promise<QueryGetNftResponse>,
         readonly allNfts: (pagination?: PageRequest) => Promise<QueryAllNftResponse>,
         readonly params: () => Promise<QueryParamsResponse>,
-        readonly admins: () => Promise<QueryListAdminsResponse>
+        readonly admins: () => Promise<QueryListAdminsResponse>,
+        readonly auction: (id: Long) => Promise<QueryGetAuctionResponse>,
+        readonly allAuctions: (pagination?: PageRequest) => Promise<QueryAllAuctionResponse>
     }
 }
 
@@ -52,6 +56,12 @@ export function setupMarketplaceExtension(base: QueryClient): MarketplaceExtensi
             },
             admins: async() => {
                 return queryService.ListAdmins({});
+            },
+            auction: async(id: Long) => {
+                return queryService.Auction({id: id});
+            },
+            allAuctions: async(pagination?: PageRequest) => {
+                return queryService.AuctionAll({pagination: pagination});
             }
         }
     };
