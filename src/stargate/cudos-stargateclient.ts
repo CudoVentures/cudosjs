@@ -1,4 +1,4 @@
-import { IndexedTx, StargateClient, StargateClientOptions } from '@cosmjs/stargate';
+import { IndexedTx, SearchTxQuery, StargateClient, StargateClientOptions } from '@cosmjs/stargate';
 import { HttpEndpoint, Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { GroupQueryClient } from './modules/group/clients/queryClient';
 import { NFTQueryClient } from './modules/nft/clients/queryClient';
@@ -68,6 +68,44 @@ export class CudosStargateClient extends StargateClient {
         respCopy.tx = decodedTx 
 
         return respCopy
+    }
+
+    public async searchTxLegacy(query: ReadonlyArray< { readonly key: string; readonly value: string; } >, heightFrom: number = -1, heightTo: number = -1): Promise < IndexedTx[] > {
+        let indexedTxMapResult = new Map < string, IndexedTx >();
+
+        for (let i = 0;  i < query.length; ++i) {
+            const queryI = query[i];
+            const params = [`${queryI.key}='${queryI.value}'`];
+            if (heightFrom != -1) {
+                params.push(`tx.height>=${heightFrom}`);
+            }
+            if (heightTo != -1) {
+                params.push(`tx.height<=${heightTo}`);
+            }
+
+            const indexedTxs = await this.searchTx(params.join(' AND '));
+
+            if (i === 0) {
+                indexedTxs.forEach((iTx) => {
+                    indexedTxMapResult.set(iTx.hash, iTx);
+                });
+            } else {
+                const indexedTxMap = new Map < string, IndexedTx >();
+                indexedTxs.forEach((iTx) => {
+                    if (indexedTxMapResult.has(iTx.hash) === true) {
+                        indexedTxMap.set(iTx.hash, iTx);
+                    }
+                });
+                indexedTxMapResult = indexedTxMap;
+            }
+
+            // no point to conitinue if resulting map already does not have any elements in
+            if (indexedTxMapResult.size === 0) {
+                break;
+            }
+        }
+
+        return Array.from(indexedTxMapResult.values());
     }
     
 }
