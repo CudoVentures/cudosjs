@@ -16,7 +16,7 @@ export class CudosNetworkConsts {
     static BECH32_PREFIX_CONS_ADDR = 'cudosvalcons';
     static BECH32_PREFIX_CONS_PUB = 'cudosvalconspub';
     static BECH32_ACC_ADDR_LENGTH = 44;
-    static DEFAULT_GAS_MULTIPLIER = 1.3;
+    static DEFAULT_GAS_MULTIPLIER = 1.5;
 
     static MESSAGE_TYPE_URL = '/gravity.v1.MsgSendToEth';
 
