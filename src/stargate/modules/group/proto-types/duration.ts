@@ -1,9 +1,9 @@
 /* eslint-disable */
-import Long from "long";
-import _m0 from "protobufjs/minimal";
+
+import { DeepPartial, Exact, isSet } from "../helpers";
+import { BinaryReader, BinaryWriter } from "./binary";
 
 export const protobufPackage = "google.protobuf";
-
 /**
  * A Duration represents a signed, fixed-length span of time represented
  * as a count of seconds and fractions of seconds at nanosecond
@@ -26,7 +26,7 @@ export const protobufPackage = "google.protobuf";
  *     if (duration.seconds < 0 && duration.nanos > 0) {
  *       duration.seconds += 1;
  *       duration.nanos -= 1000000000;
- *     } else if (duration.seconds > 0 && duration.nanos < 0) {
+ *     } else if (durations.seconds > 0 && duration.nanos < 0) {
  *       duration.seconds -= 1;
  *       duration.nanos += 1000000000;
  *     }
@@ -70,7 +70,7 @@ export interface Duration {
    * to +315,576,000,000 inclusive. Note: these bounds are computed from:
    * 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
    */
-  seconds: number;
+  seconds: bigint;
   /**
    * Signed fractions of a second at nanosecond resolution of the span
    * of time. Durations less than one second are represented with a 0
@@ -81,15 +81,16 @@ export interface Duration {
    */
   nanos: number;
 }
-
-const baseDuration: object = { seconds: 0, nanos: 0 };
-
+function createBaseDuration(): Duration {
+  return {
+    seconds: BigInt(0),
+    nanos: 0,
+  };
+}
 export const Duration = {
-  encode(
-    message: Duration,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    if (message.seconds !== 0) {
+  typeUrl: "/google.protobuf.Duration",
+  encode(message: Duration, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
+    if (message.seconds !== BigInt(0)) {
       writer.uint32(8).int64(message.seconds);
     }
     if (message.nanos !== 0) {
@@ -97,16 +98,15 @@ export const Duration = {
     }
     return writer;
   },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Duration {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: BinaryReader | Uint8Array, length?: number): Duration {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseDuration } as Duration;
+    const message = createBaseDuration();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.seconds = longToNumber(reader.int64() as Long);
+          message.seconds = reader.int64();
           break;
         case 2:
           message.nanos = reader.int32();
@@ -118,82 +118,24 @@ export const Duration = {
     }
     return message;
   },
-
   fromJSON(object: any): Duration {
-    const message = { ...baseDuration } as Duration;
-    message.seconds =
-      object.seconds !== undefined && object.seconds !== null
-        ? Number(object.seconds)
-        : 0;
-    message.nanos =
-      object.nanos !== undefined && object.nanos !== null
-        ? Number(object.nanos)
-        : 0;
-    return message;
+    const obj = createBaseDuration();
+    if (isSet(object.seconds)) obj.seconds = BigInt(object.seconds.toString());
+    if (isSet(object.nanos)) obj.nanos = Number(object.nanos);
+    return obj;
   },
-
   toJSON(message: Duration): unknown {
     const obj: any = {};
-    message.seconds !== undefined &&
-      (obj.seconds = Math.round(message.seconds));
+    message.seconds !== undefined && (obj.seconds = (message.seconds || BigInt(0)).toString());
     message.nanos !== undefined && (obj.nanos = Math.round(message.nanos));
     return obj;
   },
-
   fromPartial<I extends Exact<DeepPartial<Duration>, I>>(object: I): Duration {
-    const message = { ...baseDuration } as Duration;
-    message.seconds = object.seconds ?? 0;
+    const message = createBaseDuration();
+    if (object.seconds !== undefined && object.seconds !== null) {
+      message.seconds = BigInt(object.seconds.toString());
+    }
     message.nanos = object.nanos ?? 0;
     return message;
   },
 };
-
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
-  throw "Unable to locate global object";
-})();
-
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
-
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
-
-function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
-  }
-  return long.toNumber();
-}
-
-if (_m0.util.Long !== Long) {
-  _m0.util.Long = Long as any;
-  _m0.configure();
-}

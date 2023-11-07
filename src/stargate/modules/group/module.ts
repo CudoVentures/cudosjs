@@ -2,7 +2,7 @@ import { Coin, EncodeObject } from "@cosmjs/proto-signing";
 import { estimateFee, ClientSimulateFn, registerMsgs, ClientRegistry, DEFAULT_GAS_MULTIPLIER } from "../../../utils";
 import { GasPrice, StdFee } from "../..";
 import { Exec, MsgCreateGroupWithPolicy, MsgSubmitProposal, MsgUpdateGroupMetadata, MsgVote, MsgExec, MsgWithdrawProposal, MsgUpdateGroupMembers, MsgUpdateGroupPolicyMetadata, MsgUpdateGroupPolicyDecisionPolicy } from "./proto-types/tx.pb";
-import { ThresholdDecisionPolicy, Member, VoteOption } from "./proto-types/types.pb";
+import { ThresholdDecisionPolicy, VoteOption } from "./proto-types/types.pb";
 import { msgCreateGroupWithPolicy, msgSubmitProposal, thresholdDecisionPolicy, msgVote, msgExec, msgUpdateGroupMembers, msgUpdateGroupMetadata, msgUpdateGroupPolicyMetadata, msgUpdateGroupPolicyDecisionPolicy, msgWithdrawProposal } from "./types";
 import { MsgMultiSend, MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 
@@ -12,25 +12,25 @@ export class GroupModule {
 
     constructor(client: ClientSimulateFn & ClientRegistry) {
         this._client = client;
-        registerMsgs(client.registry, [
-            msgCreateGroupWithPolicy,
-            msgSubmitProposal,
-            msgVote,
-            msgExec,
-            msgWithdrawProposal,
-            msgUpdateGroupMembers,
-            msgUpdateGroupMetadata,
-            msgUpdateGroupPolicyMetadata,
-            msgUpdateGroupPolicyDecisionPolicy
-        ]);
+        // registerMsgs(client.registry, [
+        //     msgCreateGroupWithPolicy,
+        //     msgSubmitProposal,
+        //     msgVote,
+        //     msgExec,
+        //     msgWithdrawProposal,
+        //     msgUpdateGroupMembers,
+        //     msgUpdateGroupMetadata,
+        //     msgUpdateGroupPolicyMetadata,
+        //     msgUpdateGroupPolicyDecisionPolicy
+        // ]);
     }
 
     public async msgCreateGroupWithPolicy(
         admin: string,
         members: {
-            address: string;
-            weight: number;
-            metadata: string;
+            address?: string | undefined;
+            weight?: string | undefined;
+            metadata?: string | undefined;
         }[],
         groupMetadata: string,
         groupPolicyMetadata: string,
@@ -46,27 +46,21 @@ export class GroupModule {
         const threshold = ThresholdDecisionPolicy.fromPartial({
             threshold: decisionPolicy.threshold.toString(),
             windows: {
-                voting_period: { seconds: decisionPolicy.votingPeriod },
-                min_execution_period: { seconds: decisionPolicy.minExecutionPeriod },
+                votingPeriod: { seconds: BigInt(decisionPolicy.votingPeriod) },
+                minExecutionPeriod: { seconds: BigInt(decisionPolicy.minExecutionPeriod) },
             }
         });
-
-        const membersEncoded = members.map(m => Member.fromPartial({
-            address: m.address,
-            weight: m.weight.toString(),
-            metadata: m.metadata,
-        }))
 
         const msgEncoded = {
             typeUrl: msgCreateGroupWithPolicy.typeUrl,
             value: MsgCreateGroupWithPolicy.fromPartial({
                 admin: admin,
-                members: membersEncoded,
-                group_metadata: groupMetadata,
-                group_policy_metadata: groupPolicyMetadata,
-                group_policy_as_admin: true,
-                decision_policy: {
-                    type_url: thresholdDecisionPolicy.typeUrl,
+                members: members,
+                groupMetadata: groupMetadata,
+                groupPolicyMetadata: groupPolicyMetadata,
+                groupPolicyAsAdmin: true,
+                decisionPolicy: {
+                    typeUrl: thresholdDecisionPolicy.typeUrl,
                     value: ThresholdDecisionPolicy.encode(threshold).finish()
                 },
             }),
@@ -99,13 +93,15 @@ export class GroupModule {
         const msgProposal = {
             typeUrl: msgSubmitProposal.typeUrl,
             value: MsgSubmitProposal.fromPartial({
-                address: multisigAddress,
+                groupPolicyAddress: multisigAddress,
                 proposers: [proposer],
                 metadata: proposalMetadata,
                 messages: [{
-                    type_url: "/cosmos.bank.v1beta1.MsgSend",
+                    typeUrl: "/cosmos.bank.v1beta1.MsgSend",
                     value: MsgSend.encode(singleSendMsg).finish()
                 }],
+                title: 'Single Bank Send Proposal',
+                summary: `Bank Send to ${recipient}`
             })
         }
 
@@ -141,13 +137,15 @@ export class GroupModule {
         const msgProposal = {
             typeUrl: msgSubmitProposal.typeUrl,
             value: MsgSubmitProposal.fromPartial({
-                address: multisigAddress,
+                groupPolicyAddress: multisigAddress,
                 proposers: [proposer],
                 metadata: proposalMetadata,
                 messages: [{
-                    type_url: "/cosmos.bank.v1beta1.MsgMultiSend",
+                    typeUrl: "/cosmos.bank.v1beta1.MsgMultiSend",
                     value: MsgMultiSend.encode(multisendMsg).finish()
                 }],
+                title: 'Multi Bank Send Proposal',
+                summary: `Bank Send to: ${JSON.stringify(recipients)}`
             })
         }
 
@@ -161,9 +159,9 @@ export class GroupModule {
 
     public async msgUpdateMembersProposal(
         memberUpdates: {
-            address: string;
-            weight: number;
-            metadata: string;
+            address?: string | undefined;
+            weight?: string | undefined;
+            metadata?: string | undefined;
         }[],
         groupId: number,
         multisigAddress: string,
@@ -173,28 +171,26 @@ export class GroupModule {
         gasMultiplier = DEFAULT_GAS_MULTIPLIER,
         memo = ""
     ): Promise<{ msg: EncodeObject, fee: StdFee }> {
-        const membersEncoded = memberUpdates.map(m => Member.fromPartial({
-            address: m.address,
-            weight: m.weight.toString(),
-            metadata: m.metadata,
-        }))
 
         const msg = MsgUpdateGroupMembers.fromPartial({
             admin: multisigAddress,
-            group_id: groupId,
-            member_updates: membersEncoded
+            groupId: groupId,
+            memberUpdates: memberUpdates
         });
 
         const msgProposal = {
             typeUrl: msgSubmitProposal.typeUrl,
             value: MsgSubmitProposal.fromPartial({
-                address: multisigAddress,
+                groupPolicyAddress: multisigAddress,
                 proposers: [proposer],
                 metadata: proposalMetadata,
                 messages: [{
-                    type_url: msgUpdateGroupMembers.typeUrl,
+                    typeUrl: msgUpdateGroupMembers.typeUrl,
                     value: MsgUpdateGroupMembers.encode(msg).finish()
                 }],
+                title: "Update Group Members Proposal",
+                summary: `Proposed change: ${JSON.stringify(memberUpdates)}`
+
             })
         }
 
@@ -218,20 +214,22 @@ export class GroupModule {
     ): Promise<{ msg: EncodeObject, fee: StdFee }> {
         const msg = MsgUpdateGroupMetadata.fromPartial({
             admin: multisigAddress,
-            group_id: groupId,
+            groupId: groupId,
             metadata: metadata
         });
 
         const msgProposal = {
             typeUrl: msgSubmitProposal.typeUrl,
             value: MsgSubmitProposal.fromPartial({
-                address: multisigAddress,
+                groupPolicyAddress: multisigAddress,
                 proposers: [proposer],
                 metadata: proposalMetadata,
                 messages: [{
-                    type_url: msgUpdateGroupMetadata.typeUrl,
+                    typeUrl: msgUpdateGroupMetadata.typeUrl,
                     value: MsgUpdateGroupMetadata.encode(msg).finish()
                 }],
+                title: 'Update Group Metadata Proposal',
+                summary: `Proposed change: ${metadata}`
             })
         }
 
@@ -254,20 +252,22 @@ export class GroupModule {
     ): Promise<{ msg: EncodeObject, fee: StdFee }> {
         const msg = MsgUpdateGroupPolicyMetadata.fromPartial({
             admin: multisigAddress,
-            address: multisigAddress,
+            groupPolicyAddress: multisigAddress,
             metadata: metadata
         });
 
         const msgProposal = {
             typeUrl: msgSubmitProposal.typeUrl,
             value: MsgSubmitProposal.fromPartial({
-                address: multisigAddress,
+                groupPolicyAddress: multisigAddress,
                 proposers: [proposer],
                 metadata: proposalMetadata,
                 messages: [{
-                    type_url: msgUpdateGroupPolicyMetadata.typeUrl,
+                    typeUrl: msgUpdateGroupPolicyMetadata.typeUrl,
                     value: MsgUpdateGroupPolicyMetadata.encode(msg).finish()
                 }],
+                title: 'Update Group Policy Metadata Proposale',
+                summary: `Proposed change: ${metadata}`
             })
         }
 
@@ -295,16 +295,16 @@ export class GroupModule {
         const threshold = ThresholdDecisionPolicy.fromPartial({
             threshold: decisionPolicy.threshold.toString(),
             windows: {
-                voting_period: { seconds: decisionPolicy.votingPeriod },
-                min_execution_period: { seconds: decisionPolicy.minExecutionPeriod },
+                votingPeriod: { seconds: BigInt(decisionPolicy.votingPeriod) },
+                minExecutionPeriod: { seconds: BigInt(decisionPolicy.minExecutionPeriod) },
             }
         });
 
         const msg = MsgUpdateGroupPolicyDecisionPolicy.fromPartial({
             admin: multisigAddress,
-            address: multisigAddress,
-            decision_policy: {
-                type_url: thresholdDecisionPolicy.typeUrl,
+            groupPolicyAddress: multisigAddress,
+            decisionPolicy: {
+                typeUrl: thresholdDecisionPolicy.typeUrl,
                 value: ThresholdDecisionPolicy.encode(threshold).finish()
             }
         });
@@ -312,13 +312,15 @@ export class GroupModule {
         const msgProposal = {
             typeUrl: msgSubmitProposal.typeUrl,
             value: MsgSubmitProposal.fromPartial({
-                address: multisigAddress,
+                groupPolicyAddress: multisigAddress,
                 proposers: [proposer],
                 metadata: proposalMetadata,
                 messages: [{
-                    type_url: msgUpdateGroupPolicyDecisionPolicy.typeUrl,
+                    typeUrl: msgUpdateGroupPolicyDecisionPolicy.typeUrl,
                     value: MsgUpdateGroupPolicyDecisionPolicy.encode(msg).finish()
                 }],
+                title: 'Update Group Policy Decision Policy Proposal',
+                summary: `Proposed Change: ${JSON.stringify(decisionPolicy)}`
             })
         }
 
@@ -334,18 +336,25 @@ export class GroupModule {
         multisigAddress: string,
         proposer: string,
         proposalMetadata: string,
-        messages: { type_url: string; value: Uint8Array; }[],
+        messages: {
+            typeUrl?: string | undefined;
+            value?: Uint8Array | undefined;
+        }[],
         gasPrice: GasPrice,
         gasMultiplier = DEFAULT_GAS_MULTIPLIER,
-        memo = ""
+        memo = "",
+        title?: string,
+        summary?: string
     ): Promise<{ msg: EncodeObject, fee: StdFee }> {
         const msgEncoded = {
             typeUrl: msgSubmitProposal.typeUrl,
             value: MsgSubmitProposal.fromPartial({
-                address: multisigAddress,
+                groupPolicyAddress: multisigAddress,
                 proposers: [proposer],
                 metadata: proposalMetadata,
                 messages: messages,
+                title,
+                summary
             })
         }
 
@@ -367,10 +376,11 @@ export class GroupModule {
         gasMultiplier = DEFAULT_GAS_MULTIPLIER,
         memo = ""
     ): Promise<{ msg: EncodeObject, fee: StdFee }> {
-        const msgEncoded = {
+
+        const voteMsg = {
             typeUrl: msgVote.typeUrl,
             value: MsgVote.fromPartial({
-                proposal_id: proposalId,
+                proposalId: proposalId,
                 voter: voter,
                 option: voteOption,
                 metadata: metadata,
@@ -378,10 +388,10 @@ export class GroupModule {
             })
         }
 
-        const fee = await estimateFee(this._client, voter, [msgEncoded], gasPrice, gasMultiplier, memo);
+        const fee = await estimateFee(this._client, voter, [voteMsg], gasPrice, gasMultiplier, memo);
 
         return {
-            msg: msgEncoded,
+            msg: voteMsg,
             fee: fee
         }
     }
@@ -396,8 +406,8 @@ export class GroupModule {
         const msgEncoded = {
             typeUrl: msgExec.typeUrl,
             value: MsgExec.fromPartial({
-                proposal_id: proposalId,
-                signer: signer
+                proposalId: proposalId,
+                executor: signer
             })
         }
 
@@ -420,7 +430,7 @@ export class GroupModule {
         const msgEncoded = {
             typeUrl: msgVote.typeUrl,
             value: MsgWithdrawProposal.fromPartial({
-                proposal_id: proposalId,
+                proposalId: proposalId,
                 address: multisigAddress
             })
         }

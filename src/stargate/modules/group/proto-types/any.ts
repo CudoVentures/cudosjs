@@ -1,9 +1,9 @@
 /* eslint-disable */
-import Long from "long";
-import _m0 from "protobufjs/minimal";
+
+import { DeepPartial, Exact, base64FromBytes, bytesFromBase64, isSet } from "../helpers";
+import { BinaryReader, BinaryWriter } from "./binary";
 
 export const protobufPackage = "google.protobuf";
-
 /**
  * `Any` contains an arbitrary serialized protocol buffer message along with a
  * URL that describes the type of the serialized message.
@@ -115,34 +115,36 @@ export interface Any {
    * Schemes other than `http`, `https` (or the empty scheme) might be
    * used with implementation specific semantics.
    */
-  type_url: string;
+  typeUrl: string;
   /** Must be a valid serialized protocol buffer of the above specified type. */
   value: Uint8Array;
 }
-
-const baseAny: object = { type_url: "" };
-
+function createBaseAny(): Any {
+  return {
+    typeUrl: "",
+    value: new Uint8Array(),
+  };
+}
 export const Any = {
-  encode(message: Any, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.type_url !== "") {
-      writer.uint32(10).string(message.type_url);
+  typeUrl: "/google.protobuf.Any",
+  encode(message: Any, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
+    if (message.typeUrl !== "") {
+      writer.uint32(10).string(message.typeUrl);
     }
     if (message.value.length !== 0) {
       writer.uint32(18).bytes(message.value);
     }
     return writer;
   },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Any {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: BinaryReader | Uint8Array, length?: number): Any {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseAny } as Any;
-    message.value = new Uint8Array();
+    const message = createBaseAny();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.type_url = reader.string();
+          message.typeUrl = reader.string();
           break;
         case 2:
           message.value = reader.bytes();
@@ -154,100 +156,23 @@ export const Any = {
     }
     return message;
   },
-
   fromJSON(object: any): Any {
-    const message = { ...baseAny } as Any;
-    message.type_url =
-      object.type_url !== undefined && object.type_url !== null
-        ? String(object.type_url)
-        : "";
-    message.value =
-      object.value !== undefined && object.value !== null
-        ? bytesFromBase64(object.value)
-        : new Uint8Array();
-    return message;
-  },
-
-  toJSON(message: Any): unknown {
-    const obj: any = {};
-    message.type_url !== undefined && (obj.type_url = message.type_url);
-    message.value !== undefined &&
-      (obj.value = base64FromBytes(
-        message.value !== undefined ? message.value : new Uint8Array()
-      ));
+    const obj = createBaseAny();
+    if (isSet(object.typeUrl)) obj.typeUrl = String(object.typeUrl);
+    if (isSet(object.value)) obj.value = bytesFromBase64(object.value);
     return obj;
   },
-
+  toJSON(message: Any): unknown {
+    const obj: any = {};
+    message.typeUrl !== undefined && (obj.typeUrl = message.typeUrl);
+    message.value !== undefined &&
+      (obj.value = base64FromBytes(message.value !== undefined ? message.value : new Uint8Array()));
+    return obj;
+  },
   fromPartial<I extends Exact<DeepPartial<Any>, I>>(object: I): Any {
-    const message = { ...baseAny } as Any;
-    message.type_url = object.type_url ?? "";
+    const message = createBaseAny();
+    message.typeUrl = object.typeUrl ?? "";
     message.value = object.value ?? new Uint8Array();
     return message;
   },
 };
-
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
-  throw "Unable to locate global object";
-})();
-
-const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
-function bytesFromBase64(b64: string): Uint8Array {
-  const bin = atob(b64);
-  const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; ++i) {
-    arr[i] = bin.charCodeAt(i);
-  }
-  return arr;
-}
-
-const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
-function base64FromBytes(arr: Uint8Array): string {
-  const bin: string[] = [];
-  for (const byte of arr) {
-    bin.push(String.fromCharCode(byte));
-  }
-  return btoa(bin.join(""));
-}
-
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
-
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
-
-if (_m0.util.Long !== Long) {
-  _m0.util.Long = Long as any;
-  _m0.configure();
-}
