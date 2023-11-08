@@ -29,7 +29,6 @@ import{
 }from "./proto-types/query" 
 
 import Long from "long";
-import { NftExtension } from "../nft/queries";
 
 export interface GravityExtension {
     readonly gravity: {
@@ -55,10 +54,7 @@ export interface GravityExtension {
         readonly getDelegateKeyByValidator: (  validatorAddress: string ) => Promise<QueryDelegateKeysByValidatorAddressResponse>;
         readonly getDelegateKeyByEth: (  ethAddress: string ) => Promise<QueryDelegateKeysByEthAddressResponse>;
         readonly getDelegateKeyByOrchestrator: ( orchestratorAddress: string ) => Promise<QueryDelegateKeysByOrchestratorAddressResponse>;
-        readonly getPendingSendToEth: ( senderAddress?: string ) => Promise<QueryPendingSendToEthResponse>;
-        
-
-        
+        readonly getPendingSendToEth: ( senderAddress: string ) => Promise<QueryPendingSendToEthResponse>;       
     }
 }
 
