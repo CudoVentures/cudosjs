@@ -55,7 +55,7 @@ export interface GravityExtension {
         readonly getDelegateKeyByValidator: (  validatorAddress: string ) => Promise<QueryDelegateKeysByValidatorAddressResponse>;
         readonly getDelegateKeyByEth: (  ethAddress: string ) => Promise<QueryDelegateKeysByEthAddressResponse>;
         readonly getDelegateKeyByOrchestrator: ( orchestratorAddress: string ) => Promise<QueryDelegateKeysByOrchestratorAddressResponse>;
-        readonly getPendingSendToEth: ( senderAddress: string ) => Promise<QueryPendingSendToEthResponse>;
+        readonly getPendingSendToEth: ( senderAddress?: string ) => Promise<QueryPendingSendToEthResponse>;
         
 
         

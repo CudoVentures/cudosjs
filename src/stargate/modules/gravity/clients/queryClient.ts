@@ -157,9 +157,11 @@ export class GravityQueryClient{
         return this.gravityQueryClient.gravity.getDelegateKeyByOrchestrator(orchestratorAddress)
     }
 
-    public async getPendingSendToEth( senderAddress: string ): Promise<QueryPendingSendToEthResponse> {
-        // Check for valid cudos address
-        checkValidAddress(senderAddress)
+    public async getPendingSendToEth( senderAddress: string = "" ): Promise<QueryPendingSendToEthResponse> {
+        if (senderAddress != "") {
+            // Check for valid cudos address
+            checkValidAddress(senderAddress)
+        }
 
         return this.gravityQueryClient.gravity.getPendingSendToEth(senderAddress)
     }
