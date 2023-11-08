@@ -145,7 +145,7 @@ export class GroupModule {
                     value: MsgMultiSend.encode(multisendMsg).finish()
                 }],
                 title: 'Multi Bank Send Proposal',
-                summary: `Bank Send to: ${JSON.stringify(recipients)}`
+                summary: `Bank Send to Multiple Recipients`
             })
         }
 
@@ -189,7 +189,7 @@ export class GroupModule {
                     value: MsgUpdateGroupMembers.encode(msg).finish()
                 }],
                 title: "Update Group Members Proposal",
-                summary: `Proposed change: ${JSON.stringify(memberUpdates)}`
+                summary: `Proposal to change wallet members`
 
             })
         }
@@ -229,7 +229,7 @@ export class GroupModule {
                     value: MsgUpdateGroupMetadata.encode(msg).finish()
                 }],
                 title: 'Update Group Metadata Proposal',
-                summary: `Proposed change: ${metadata}`
+                summary: `Proposal to change wallet metadata`
             })
         }
 
@@ -267,7 +267,7 @@ export class GroupModule {
                     value: MsgUpdateGroupPolicyMetadata.encode(msg).finish()
                 }],
                 title: 'Update Group Policy Metadata Proposale',
-                summary: `Proposed change: ${metadata}`
+                summary: `Proposal to change wallet policy metadata`
             })
         }
 
@@ -319,8 +319,8 @@ export class GroupModule {
                     typeUrl: msgUpdateGroupPolicyDecisionPolicy.typeUrl,
                     value: MsgUpdateGroupPolicyDecisionPolicy.encode(msg).finish()
                 }],
-                title: 'Update Group Policy Decision Policy Proposal',
-                summary: `Proposed Change: ${JSON.stringify(decisionPolicy)}`
+                title: 'Update Group Decision Policy Proposal',
+                summary: `Proposal to change wallet decision policy`
             })
         }
 
